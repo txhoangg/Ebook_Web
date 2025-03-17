@@ -11,8 +11,6 @@ const state = {
 /**
  * Hàm tiện ích để lấy đường dẫn chính xác dựa trên vị trí hiện tại
  */
-// Thay đổi hàm này trong main.js
-// Current function (problematic):
 function getCorrectPath(path) {
   // Nếu đường dẫn đã bắt đầu bằng '/' tức là đường dẫn tuyệt đối, trả về nguyên bản.
   if (path.startsWith("/")) {
@@ -977,6 +975,7 @@ function closeAuthModal() {
 function loadPageSpecificContent() {
   // Check if we're on the home page
   if (document.getElementById("home-page")) {
+    console.log("Trang chủ được phát hiện, đang tải nội dung...");
     loadHomePage();
   }
 
@@ -1008,18 +1007,34 @@ function loadPageSpecificContent() {
  */
 async function loadHomePage() {
   try {
+    console.log("Đang tải trang chủ...");
+
     // Load categories
     const categories = await apiService.categories.getAll();
+    console.log("Danh mục đã tải:", categories);
     state.categories = categories;
 
     const categoryGrid = document.querySelector(".category-grid");
     if (categoryGrid) {
-      renderCategories(categories, categoryGrid);
+      console.log("Đã tìm thấy phần tử .category-grid");
+
+      // Kiểm tra mảng categories
+      if (!categories || categories.length === 0) {
+        console.log("Không có danh mục nào để hiển thị");
+        categoryGrid.innerHTML = "<p>Không có danh mục nào.</p>";
+      } else {
+        console.log("Có " + categories.length + " danh mục, đang render...");
+        renderCategories(categories, categoryGrid);
+      }
+    } else {
+      console.error("Không tìm thấy phần tử .category-grid");
     }
 
     // Load featured books
     try {
+      console.log("Đang tải sách nổi bật...");
       const featuredBooks = await apiService.books.getFeatured();
+      console.log("Sách nổi bật đã tải:", featuredBooks);
       state.featuredBooks = featuredBooks;
 
       const featuredBooksGrid = document.querySelector(
@@ -1043,7 +1058,9 @@ async function loadHomePage() {
 
     // Load new books
     try {
+      console.log("Đang tải sách mới...");
       const newBooks = await apiService.books.getLatest();
+      console.log("Sách mới đã tải:", newBooks);
       state.newBooks = newBooks;
 
       const newBooksGrid = document.querySelector(".new-arrivals .book-grid");
@@ -1075,9 +1092,20 @@ async function loadHomePage() {
  * Render categories
  */
 function renderCategories(categories, container) {
-  if (!container) return;
+  console.log("Đang render danh mục:", categories);
+  if (!container) {
+    console.error("Container không tồn tại!");
+    return;
+  }
 
   container.innerHTML = "";
+
+  // Kiểm tra lại mảng categories
+  if (!categories || categories.length === 0) {
+    console.log("Không có danh mục để hiển thị");
+    container.innerHTML = "<p>Không có danh mục nào để hiển thị.</p>";
+    return;
+  }
 
   // Create grid-based layout
   categories.forEach((category) => {
@@ -1253,766 +1281,16 @@ async function loadBookDetail(bookId) {
   }
 }
 
-/**
- * Render book detail
- */
-function renderBookDetail(book, container) {
-  // Process cover path
-  let coverPath = imageUtils
-    ? imageUtils.processImagePath(book.coverPath)
-    : book.coverPath || "/api/placeholder/300/450";
+// Thêm sự kiện onload để đảm bảo DOM đã sẵn sàng
+window.addEventListener("load", function () {
+  // Kiểm tra lại nếu đang ở trang chủ
+  if (document.getElementById("home-page")) {
+    console.log("DOM đã load hoàn tất, kiểm tra lại việc tải trang chủ...");
 
-  // Check if book is new (less than 7 days old)
-  const isNew =
-    new Date(book.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-
-  // Create HTML
-  container.innerHTML = `
-    <div class="book-detail-image">
-      <img src="${coverPath}" 
-           alt="${book.title}" 
-           onerror="this.onerror=null; this.src='/api/placeholder/300/450';">
-      ${
-        book.featured
-          ? '<span class="book-label book-featured"><i class="fas fa-award"></i> Nổi bật</span>'
-          : ""
-      }
-      ${
-        isNew
-          ? '<span class="book-label book-new"><i class="fas fa-certificate"></i> Mới</span>'
-          : ""
-      }
-    </div>
-    <div class="book-detail-info">
-      <h1 class="book-detail-title">${book.title}</h1>
-      <div class="book-detail-author"><i class="fas fa-user-edit"></i> Tác giả: ${
-        book.author
-      }</div>
-      
-      <div class="book-detail-meta">
-        <div><i class="fas fa-folder"></i> ${
-          book.category ? book.category.name : "Không phân loại"
-        }</div>
-        ${
-          book.pageCount
-            ? `<div><i class="fas fa-file-alt"></i> ${book.pageCount} trang</div>`
-            : ""
-        }
-        <div><i class="fas fa-star"></i> ${book.rating || "0"}/5 (${
-    book.ratingCount || "0"
-  } đánh giá)</div>
-        <div><i class="fas fa-download"></i> ${
-          book.downloadCount || "0"
-        } lượt tải</div>
-        ${
-          book.language
-            ? `<div><i class="fas fa-language"></i> ${book.language}</div>`
-            : ""
-        }
-        ${
-          book.publishYear
-            ? `<div><i class="fas fa-calendar-alt"></i> ${book.publishYear}</div>`
-            : ""
-        }
-      </div>
-      
-      <div class="book-stats-detailed">
-        <div class="book-stat">
-          <div class="book-stat-value">${book.rating || "0"}</div>
-          <div class="book-stat-label">Đánh giá</div>
-        </div>
-        <div class="book-stat">
-          <div class="book-stat-value">${book.downloadCount || "0"}</div>
-          <div class="book-stat-label">Lượt tải</div>
-        </div>
-        <div class="book-stat">
-          <div class="book-stat-value">${book.viewCount || "0"}</div>
-          <div class="book-stat-label">Lượt xem</div>
-        </div>
-      </div>
-      
-      <div class="book-detail-description">
-        <h3><i class="fas fa-info-circle"></i> Giới thiệu sách</h3>
-        <div class="book-description-content">${
-          formatDescription(book.description) || "Không có mô tả."
-        }</div>
-      </div>
-      
-      <div class="book-detail-actions">
-        <button class="btn btn-primary" id="download-btn">
-          <i class="fas fa-download"></i> Tải xuống
-        </button>
-        <button class="btn btn-secondary" id="favorite-btn">
-          <i class="far fa-heart"></i> Thêm vào yêu thích
-        </button>
-        <button class="btn btn-outline share-btn" id="share-btn">
-          <i class="fas fa-share-alt"></i> Chia sẻ
-        </button>
-      </div>
-      
-      ${
-        book.uploader
-          ? `
-        <div class="book-uploader">
-          <p><i class="fas fa-user-circle"></i> Đăng tải bởi: ${
-            book.uploader.username
-          } (${new Date(book.createdAt).toLocaleDateString()})</p>
-        </div>
-      `
-          : ""
-      }
-    </div>
-  `;
-
-  // Add event listeners
-  document.getElementById("download-btn").addEventListener("click", () => {
-    downloadBook(book.id);
-  });
-
-  const favoriteBtn = document.getElementById("favorite-btn");
-  updateFavoriteButton(favoriteBtn, book.id);
-
-  // Share button
-  document.getElementById("share-btn").addEventListener("click", () => {
-    shareBook(book);
-  });
-}
-
-/**
- * Format book description with paragraphs and links
- */
-function formatDescription(description) {
-  if (!description) return "";
-
-  // Convert line breaks to paragraphs
-  const paragraphs = description.split("\n\n").filter((p) => p.trim());
-
-  // Process each paragraph
-  const processedParagraphs = paragraphs.map((paragraph) => {
-    // Convert URLs to links
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    return paragraph.replace(
-      urlRegex,
-      (url) =>
-        `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`
-    );
-  });
-
-  // Join paragraphs with proper HTML
-  return processedParagraphs.map((p) => `<p>${p}</p>`).join("");
-}
-
-/**
- * Update favorite button state
- */
-async function updateFavoriteButton(button, bookId) {
-  if (!state.isAuthenticated) {
-    // Not logged in, keep default state
-    button.innerHTML = '<i class="far fa-heart"></i> Thêm vào yêu thích';
-    button.onclick = () => {
-      showAuthModal("login");
-    };
-    return;
-  }
-
-  try {
-    // Check if book is in favorites
-    const favorites = await apiService.users.getFavoriteBooks();
-    const isFavorite = favorites.some((fav) => fav.id === parseInt(bookId));
-
-    if (isFavorite) {
-      button.innerHTML = '<i class="fas fa-heart"></i> Xóa khỏi yêu thích';
-      button.className = "btn btn-danger";
-      button.onclick = () => removeFromFavorites(bookId);
-    } else {
-      button.innerHTML = '<i class="far fa-heart"></i> Thêm vào yêu thích';
-      button.className = "btn btn-secondary";
-      button.onclick = () => addToFavorites(bookId);
-    }
-  } catch (error) {
-    console.error("Error checking favorite status:", error);
-
-    // Default state on error
-    button.innerHTML = '<i class="far fa-heart"></i> Thêm vào yêu thích';
-    button.onclick = () => addToFavorites(bookId);
-  }
-}
-
-/**
- * Add book to favorites
- */
-async function addToFavorites(bookId) {
-  if (!state.isAuthenticated) {
-    showAuthModal("login");
-    return;
-  }
-
-  try {
-    const response = await apiService.users.addToFavorites(bookId);
-
-    if (response.success || response.message) {
-      // Show success notification
-      if (typeof notifications !== "undefined") {
-        notifications.success(
-          response.message || "Đã thêm sách vào danh sách yêu thích!"
-        );
-      }
-
-      // Update button state
-      const favoriteBtn = document.getElementById("favorite-btn");
-      if (favoriteBtn) {
-        updateFavoriteButton(favoriteBtn, bookId);
-      }
-    } else {
-      // Show error notification
-      if (typeof notifications !== "undefined") {
-        notifications.error(
-          response.message || "Có lỗi xảy ra khi thêm vào yêu thích"
-        );
-      }
-    }
-  } catch (error) {
-    console.error("Error adding to favorites:", error);
-
-    // Show error notification
-    if (typeof notifications !== "undefined") {
-      notifications.error(
-        "Có lỗi xảy ra khi thêm vào yêu thích: " +
-          (error.message || "Lỗi không xác định")
-      );
+    const categoryGrid = document.querySelector(".category-grid");
+    if (categoryGrid && (!state.categories || state.categories.length === 0)) {
+      console.log("Tải lại danh mục...");
+      loadHomePage();
     }
   }
-}
-
-/**
- * Remove book from favorites
- */
-async function removeFromFavorites(bookId) {
-  if (!state.isAuthenticated) {
-    showAuthModal("login");
-    return;
-  }
-
-  try {
-    const response = await apiService.users.removeFromFavorites(bookId);
-
-    if (response.success || response.message) {
-      // Show success notification
-      if (typeof notifications !== "undefined") {
-        notifications.success(
-          response.message || "Đã xóa sách khỏi danh sách yêu thích!"
-        );
-      }
-
-      // Update button state
-      const favoriteBtn = document.getElementById("favorite-btn");
-      if (favoriteBtn) {
-        updateFavoriteButton(favoriteBtn, bookId);
-      }
-    } else {
-      // Show error notification
-      if (typeof notifications !== "undefined") {
-        notifications.error(
-          response.message || "Có lỗi xảy ra khi xóa khỏi yêu thích"
-        );
-      }
-    }
-  } catch (error) {
-    console.error("Error removing from favorites:", error);
-
-    // Show error notification
-    if (typeof notifications !== "undefined") {
-      notifications.error(
-        "Có lỗi xảy ra khi xóa khỏi yêu thích: " +
-          (error.message || "Lỗi không xác định")
-      );
-    }
-  }
-}
-
-/**
- * Download book
- */
-// Sửa hàm downloadBook() trong file main.js
-function downloadBook(bookId) {
-  if (!state.isAuthenticated) {
-    showAuthModal("login");
-    if (typeof notifications !== "undefined") {
-      notifications.info("Vui lòng đăng nhập để tải sách");
-    }
-    return;
-  }
-
-  apiService.books.download(bookId);
-  if (typeof notifications !== "undefined") {
-    notifications.success("Đang tải xuống sách...");
-  }
-}
-
-/**
- * Share book
- */
-function shareBook(book) {
-  // Check if Web Share API is supported
-  if (navigator.share) {
-    navigator
-      .share({
-        title: book.title,
-        text: `Khám phá cuốn sách "${book.title}" của tác giả ${book.author} trên EBook Haven`,
-        url: window.location.href,
-      })
-      .then(() => {
-        console.log("Book shared successfully");
-      })
-      .catch((error) => {
-        console.error("Error sharing book:", error);
-
-        // Fallback to copy link method
-        copyShareLink();
-      });
-  } else {
-    // Fallback for browsers that don't support the Web Share API
-    copyShareLink();
-  }
-}
-
-/**
- * Copy share link to clipboard
- */
-function copyShareLink() {
-  const dummy = document.createElement("input");
-  document.body.appendChild(dummy);
-  dummy.value = window.location.href;
-  dummy.select();
-  document.execCommand("copy");
-  document.body.removeChild(dummy);
-
-  // Show notification
-  if (typeof notifications !== "undefined") {
-    notifications.success("Đã sao chép liên kết vào clipboard!");
-  }
-}
-
-/**
- * Update rating section visibility
- */
-function updateRatingSectionVisibility() {
-  const ratingSection = document.getElementById("rating-section");
-
-  if (ratingSection) {
-    if (state.isAuthenticated) {
-      ratingSection.style.display = "block";
-      setupRatingStars();
-    } else {
-      ratingSection.style.display = "none";
-    }
-  }
-}
-
-/**
- * Setup rating stars
- */
-function setupRatingStars() {
-  let currentRating = 0;
-  const stars = document.querySelectorAll("#star-rating i");
-
-  if (!stars.length) return;
-
-  stars.forEach((star) => {
-    // Hover effect
-    star.addEventListener("mouseover", function () {
-      const rating = parseInt(this.dataset.rating);
-      highlightStars(rating);
-    });
-
-    star.addEventListener("mouseout", function () {
-      highlightStars(currentRating);
-    });
-
-    // Click to set rating
-    star.addEventListener("click", function () {
-      currentRating = parseInt(this.dataset.rating);
-      highlightStars(currentRating);
-    });
-  });
-
-  // Handle submit rating
-  const submitBtn = document.getElementById("submit-rating");
-  if (submitBtn) {
-    submitBtn.addEventListener("click", async function () {
-      if (currentRating === 0) {
-        // Show warning notification
-        if (typeof notifications !== "undefined") {
-          notifications.warning("Vui lòng chọn số sao đánh giá!");
-        }
-        return;
-      }
-
-      // Get book ID from URL
-      const urlParams = new URLSearchParams(window.location.search);
-      const bookId = urlParams.get("id");
-
-      if (!bookId) return;
-
-      try {
-        // Get comment
-        const comment = document.getElementById("comment").value;
-
-        // Submit rating
-        await apiService.books.rate(bookId, currentRating, comment);
-
-        // Show success notification
-        if (typeof notifications !== "undefined") {
-          notifications.success("Đã gửi đánh giá thành công!");
-        }
-
-        // Reload page after delay
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
-      } catch (error) {
-        console.error("Error rating book:", error);
-
-        // Show error notification
-        if (typeof notifications !== "undefined") {
-          notifications.error(
-            "Lỗi khi gửi đánh giá: " + (error.message || "Lỗi không xác định")
-          );
-        }
-      }
-    });
-  }
-
-  // Helper function to highlight stars
-  function highlightStars(rating) {
-    stars.forEach((star) => {
-      const starRating = parseInt(star.dataset.rating);
-
-      if (starRating <= rating) {
-        star.className = "fas fa-star";
-      } else {
-        star.className = "far fa-star";
-      }
-    });
-  }
-}
-
-/**
- * Load book comments
- */
-async function loadBookComments(bookId) {
-  try {
-    const comments = await apiService.books.getComments(bookId);
-
-    const commentsSection = document.getElementById("comments-section");
-    const commentsContainer = document.getElementById("comments-container");
-
-    if (!commentsSection || !commentsContainer) return;
-
-    if (comments && comments.length > 0) {
-      commentsSection.style.display = "block";
-      renderComments(comments, commentsContainer);
-    } else {
-      commentsSection.style.display = "none";
-    }
-  } catch (error) {
-    console.error("Error loading comments:", error);
-
-    // Hide comments section on error
-    const commentsSection = document.getElementById("comments-section");
-    if (commentsSection) {
-      commentsSection.style.display = "none";
-    }
-  }
-}
-
-/**
- * Render comments
- */
-function renderComments(comments, container) {
-  container.innerHTML = "";
-
-  comments.forEach((comment) => {
-    // Format date
-    const date = new Date(comment.createdAt);
-    const formattedDate = date.toLocaleDateString("vi-VN", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-
-    // Create star rating HTML
-    let starsHTML = "";
-    for (let i = 1; i <= 5; i++) {
-      if (i <= comment.rating) {
-        starsHTML += '<i class="fas fa-star"></i>';
-      } else {
-        starsHTML += '<i class="far fa-star"></i>';
-      }
-    }
-
-    // Create comment element
-    const commentEl = document.createElement("div");
-    commentEl.className = "comment animate-fadeIn";
-
-    commentEl.innerHTML = `
-      <div class="comment-header">
-        <div class="comment-user">${
-          comment.user.displayName || comment.user.username
-        }</div>
-        <div class="comment-date">${formattedDate}</div>
-      </div>
-      <div class="comment-rating">${starsHTML}</div>
-      <div class="comment-content">${comment.comment}</div>
-    `;
-
-    container.appendChild(commentEl);
-  });
-}
-
-/**
- * Load related books
- */
-async function loadRelatedBooks(categoryId, currentBookId) {
-  try {
-    const relatedBooks = await apiService.categories.getBooks(categoryId);
-
-    // Remove current book and limit to 4 books
-    const filteredBooks = relatedBooks
-      .filter((book) => book.id !== parseInt(currentBookId))
-      .slice(0, 4);
-
-    const relatedBooksContainer = document.getElementById("related-books");
-
-    if (!relatedBooksContainer) return;
-
-    if (filteredBooks.length > 0) {
-      renderBooks(filteredBooks, relatedBooksContainer);
-    } else {
-      // Hide related books section if no books
-      const relatedBooksSection = document.querySelector(".related-books");
-      if (relatedBooksSection) {
-        relatedBooksSection.style.display = "none";
-      }
-    }
-  } catch (error) {
-    console.error("Error loading related books:", error);
-
-    // Hide related books section on error
-    const relatedBooksSection = document.querySelector(".related-books");
-    if (relatedBooksSection) {
-      relatedBooksSection.style.display = "none";
-    }
-  }
-}
-
-/**
- * Initialize animations
- */
-function initAnimations() {
-  // Fade in animations for home page
-  const animateItems = document.querySelectorAll(
-    ".animate-fadeIn, .animate-slideUp"
-  );
-
-  if (animateItems.length) {
-    // Add intersection observer for animations
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("animate-visible");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      {
-        threshold: 0.1,
-        rootMargin: "0px 0px -50px 0px",
-      }
-    );
-
-    animateItems.forEach((item) => {
-      observer.observe(item);
-    });
-
-    // Add animation classes
-    const style = document.createElement("style");
-    style.textContent = `
-      .animate-fadeIn {
-        opacity: 0;
-        transition: opacity 0.6s ease;
-      }
-      
-      .animate-slideUp {
-        opacity: 0;
-        transform: translateY(30px);
-        transition: opacity 0.6s ease, transform 0.6s ease;
-      }
-      
-      .animate-visible.animate-fadeIn {
-        opacity: 1;
-      }
-      
-      .animate-visible.animate-slideUp {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      
-      .animate-item {
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.5s ease, transform 0.5s ease;
-      }
-      
-      .animate-visible.animate-item {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    `;
-    document.head.appendChild(style);
-  }
-}
-
-/**
- * Load search results page
- */
-async function loadSearchResults(query) {
-  // Update page title and search query display
-  document.title = `Kết quả tìm kiếm: ${query} - EBook Haven`;
-
-  const searchTermEl = document.getElementById("search-term");
-  if (searchTermEl) {
-    searchTermEl.textContent = query;
-  }
-
-  // Pre-fill search input
-  const searchInput = document.getElementById("search-input");
-  if (searchInput) {
-    searchInput.value = query;
-  }
-
-  try {
-    // Load search results
-    const params = { title: query };
-
-    // Get filter values if they exist
-    const categoryFilter = document.getElementById("category-filter");
-    const sortFilter = document.getElementById("sort-filter");
-
-    if (categoryFilter && categoryFilter.value) {
-      params.category = categoryFilter.value;
-    }
-
-    if (sortFilter && sortFilter.value) {
-      params.sort = sortFilter.value;
-    }
-
-    const results = await apiService.books.getAll(params);
-
-    // Update result count
-    const searchCountEl = document.getElementById("search-count");
-    if (searchCountEl) {
-      searchCountEl.innerHTML = `Tìm thấy <span>${results.length}</span> kết quả`;
-    }
-
-    // Render results
-    const resultsContainer = document.querySelector(".search-results");
-    const emptyMessage = document.querySelector(".search-empty");
-
-    if (resultsContainer && emptyMessage) {
-      if (results.length > 0) {
-        resultsContainer.style.display = "grid";
-        emptyMessage.style.display = "none";
-        renderBooks(results, resultsContainer);
-      } else {
-        resultsContainer.style.display = "none";
-        emptyMessage.style.display = "block";
-      }
-    }
-
-    // Complete loading
-    completeLoading();
-  } catch (error) {
-    console.error("Error loading search results:", error);
-
-    // Show error message
-    const resultsContainer = document.querySelector(".search-results");
-    if (resultsContainer) {
-      resultsContainer.innerHTML = `
-        <div class="error-message">
-          <h2>Lỗi tìm kiếm</h2>
-          <p>Đã xảy ra lỗi khi tìm kiếm. Vui lòng thử lại sau.</p>
-        </div>
-      `;
-    }
-
-    completeLoading();
-  }
-}
-
-/**
- * Load category page
- */
-async function loadCategoryPage(categoryId) {
-  try {
-    // Load category details
-    const category = await apiService.categories.getById(categoryId);
-
-    // Update page title
-    if (category) {
-      document.title = `${category.name} - EBook Haven`;
-
-      // Update category title
-      const categoryTitleEl = document.getElementById("category-title");
-      if (categoryTitleEl) {
-        categoryTitleEl.textContent = category.name;
-      }
-
-      // Set active category in the list
-      const categoryItems = document.querySelectorAll(".category-item");
-      categoryItems.forEach((item) => {
-        item.classList.remove("active");
-        if (item.dataset.id === categoryId) {
-          item.classList.add("active");
-        }
-      });
-    }
-
-    // Load books in this category
-    const books = await apiService.categories.getBooks(categoryId);
-
-    // Render books
-    const booksGrid = document.getElementById("category-books-grid");
-    const noBooks = document.getElementById("no-books");
-
-    if (booksGrid && noBooks) {
-      if (books && books.length > 0) {
-        booksGrid.style.display = "grid";
-        noBooks.style.display = "none";
-        renderBooks(books, booksGrid);
-      } else {
-        booksGrid.style.display = "none";
-        noBooks.style.display = "block";
-      }
-    }
-
-    // Complete loading
-    completeLoading();
-  } catch (error) {
-    console.error("Error loading category page:", error);
-
-    // Show error message
-    const booksGrid = document.getElementById("category-books-grid");
-    if (booksGrid) {
-      booksGrid.innerHTML = `
-        <div class="error-message">
-          <h2>Lỗi tải danh mục</h2>
-          <p>Đã xảy ra lỗi khi tải danh mục. Vui lòng thử lại sau.</p>
-        </div>
-      `;
-    }
-
-    completeLoading();
-  }
-}
+});
