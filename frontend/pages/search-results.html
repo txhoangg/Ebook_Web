@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <base href="/" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kết quả tìm kiếm - EBook Haven</title>
+    <link rel="stylesheet" href="../assets/css/normalize.css" />
+    <link rel="stylesheet" href="../assets/css/main.css" />
+    <link rel="stylesheet" href="../assets/css/responsive.css" />
+    <!-- Thêm vào <head> của tất cả trang -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="container header-container">
+        <a href="../index.html" class="logo">Ebook<span>Haven</span></a>
+        <div class="search-bar">
+          <input type="text" placeholder="Tìm kiếm sách, tác giả..." />
+          <button><i class="fas fa-search"></i></button>
+        </div>
+        <div class="mobile-menu-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <ul class="nav-menu">
+          <li><a href="../index.html">Trang chủ</a></li>
+          <li><a href="categories.html">Danh mục</a></li>
+          <li><a href="upload-book.html">Tải lên sách</a></li>
+          <li><a href="#" id="login-btn">Đăng nhập</a></li>
+          <li>
+            <a href="#" id="register-btn">Đăng ký</a>
+          </li>
+        </ul>
+      </div>
+    </header>
+
+    <!-- Search Results Page -->
+    <div class="container">
+      <div class="search-header">
+        <h1>Kết quả tìm kiếm: <span id="search-term"></span></h1>
+        <p id="search-count">Tìm thấy <span>0</span> kết quả</p>
+      </div>
+
+      <div class="search-filters">
+        <div class="filter">
+          <label for="category-filter">Danh mục:</label>
+          <select id="category-filter">
+            <option value="">Tất cả</option>
+          </select>
+        </div>
+        <div class="filter">
+          <label for="sort-filter">Sắp xếp:</label>
+          <select id="sort-filter">
+            <option value="createdAt:desc">Mới nhất</option>
+            <option value="title:asc">Tên (A-Z)</option>
+            <option value="downloadCount:desc">Lượt tải nhiều nhất</option>
+            <option value="rating:desc">Đánh giá cao nhất</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="search-results book-grid">
+        <!-- Book cards will be inserted here by JavaScript -->
+      </div>
+
+      <div class="search-empty" style="display: none">
+        <h2>Không tìm thấy kết quả phù hợp</h2>
+        <p>Vui lòng thử tìm kiếm với từ khóa khác hoặc duyệt theo danh mục.</p>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container footer-container">
+        <div class="footer-col">
+          <h3>Ebook Haven</h3>
+          <p>
+            Thư viện sách điện tử cho mọi người yêu thích đọc sách và học hỏi.
+          </p>
+          <!-- Thay thế trong tất cả trang -->
+          <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3>Khám phá</h3>
+          <ul>
+            <li><a href="categories.html">Danh mục</a></li>
+            <li><a href="upload-book.html">Tải lên sách</a></li>
+            <li><a href="profile.html">Trang cá nhân</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Liên kết</h3>
+          <ul>
+            <li><a href="#">Giới thiệu</a></li>
+            <li><a href="#">Điều khoản sử dụng</a></li>
+            <li><a href="#">Chính sách bảo mật</a></li>
+            <li><a href="#">Liên hệ</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Hỗ trợ</h3>
+          <ul>
+            <li><a href="#">Câu hỏi thường gặp</a></li>
+            <li><a href="#">Hướng dẫn sử dụng</a></li>
+            <li><a href="#">Báo cáo lỗi</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="container">
+        <div class="copyright">
+          &copy; 2025 Ebook Haven. Tất cả quyền được bảo lưu.
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../assets/js/api.service.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async function () {
+        // Lấy tham số tìm kiếm từ URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get("q");
+
+        // Hiển thị từ khóa tìm kiếm
+        if (searchQuery) {
+          document.getElementById("search-term").textContent = searchQuery;
+          document.getElementById("search-input").value = searchQuery;
+        }
+
+        // Load danh mục cho bộ lọc
+        try {
+          const categories = await apiService.categories.getAll();
+          const categoryFilter = document.getElementById("category-filter");
+
+          categories.forEach((category) => {
+            const option = document.createElement("option");
+            option.value = category.id;
+            option.textContent = category.name;
+            categoryFilter.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Error loading categories:", error);
+        }
+
+        // Thực hiện tìm kiếm
+        performSearch();
+
+        // Xử lý sự kiện thay đổi bộ lọc
+        document
+          .getElementById("category-filter")
+          .addEventListener("change", performSearch);
+        document
+          .getElementById("sort-filter")
+          .addEventListener("change", performSearch);
+
+        // Xử lý form tìm kiếm
+        const searchBar = document.querySelector(".search-bar");
+        searchBar.addEventListener("submit", function (e) {
+          e.preventDefault();
+          const query = document.getElementById("search-input").value.trim();
+          if (query) {
+            // Cập nhật URL và thực hiện tìm kiếm mới
+            const url = new URL(window.location);
+            url.searchParams.set("q", query);
+            window.history.pushState({}, "", url);
+
+            document.getElementById("search-term").textContent = query;
+            performSearch();
+          }
+        });
+      });
+
+      // Hàm thực hiện tìm kiếm
+      async function performSearch() {
+        const searchQuery = new URLSearchParams(window.location.search).get(
+          "q"
+        );
+        const categoryId = document.getElementById("category-filter").value;
+        const sortValue = document.getElementById("sort-filter").value;
+
+        const params = {};
+
+        if (searchQuery) {
+          params.title = searchQuery;
+        }
+
+        if (categoryId) {
+          params.category = categoryId;
+        }
+
+        if (sortValue) {
+          params.sort = sortValue;
+        }
+
+        try {
+          const results = await apiService.books.getAll(params);
+
+          // Cập nhật số lượng kết quả
+          document.getElementById(
+            "search-count"
+          ).innerHTML = `Tìm thấy <span>${results.length}</span> kết quả`;
+
+          // Hiển thị kết quả
+          const resultsContainer = document.querySelector(".search-results");
+          const emptyMessage = document.querySelector(".search-empty");
+
+          if (results.length > 0) {
+            resultsContainer.style.display = "grid";
+            emptyMessage.style.display = "none";
+            renderBooks(results, resultsContainer);
+          } else {
+            resultsContainer.style.display = "none";
+            emptyMessage.style.display = "block";
+          }
+        } catch (error) {
+          console.error("Error searching books:", error);
+        }
+      }
+    </script>
+    <div id="notification-container"></div>
+  </body>
+</html>

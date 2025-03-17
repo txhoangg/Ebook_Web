@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EBook Haven - Thư Viện Sách Điện Tử</title>
+    <link rel="stylesheet" href="assets/css/normalize.css" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <link rel="stylesheet" href="assets/css/responsive.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="container header-container">
+        <a href="index.html" class="logo">Ebook<span>Haven</span></a>
+        <div class="search-bar">
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Tìm kiếm sách, tác giả..."
+          />
+          <button><i class="fas fa-search"></i></button>
+        </div>
+        <div class="mobile-menu-toggle" id="mobile-menu-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <ul class="nav-menu" id="nav-menu">
+          <li>
+            <a href="index.html"><i class="fas fa-home"></i> Trang chủ</a>
+          </li>
+          <li>
+            <a href="pages/categories.html"
+              ><i class="fas fa-tags"></i> Danh mục</a
+            >
+          </li>
+          <li>
+            <a href="pages/upload-book.html"
+              ><i class="fas fa-upload"></i> Tải lên sách</a
+            >
+          </li>
+          <li>
+            <a href="#" id="login-btn"
+              ><i class="fas fa-sign-in-alt"></i> Đăng nhập</a
+            >
+          </li>
+          <li>
+            <a href="#" id="register-btn"
+              ><i class="fas fa-user-plus"></i> Đăng ký</a
+            >
+          </li>
+        </ul>
+      </div>
+    </header>
+
+    <!-- Home Page Content -->
+    <div id="home-page">
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="container">
+          <h1 class="animate-fadeIn">Khám phá thế giới sách điện tử</h1>
+          <p class="animate-fadeIn">
+            Hàng ngàn sách hay miễn phí cho mọi người đam mê kiến thức và giải
+            trí. Tham gia ngay để tìm kiếm, tải về và chia sẻ những cuốn sách
+            tuyệt vời.
+          </p>
+          <a
+            href="pages/categories.html"
+            class="btn btn-lg btn-outline animate-fadeIn"
+          >
+            <i class="fas fa-compass"></i> Khám phá ngay
+          </a>
+        </div>
+      </section>
+
+      <!-- Categories Section -->
+      <section class="categories container animate-slideUp">
+        <h2 class="section-title">Danh mục sách</h2>
+        <div class="category-grid">
+          <!-- Danh mục sẽ được tải động bằng JavaScript -->
+          <div
+            class="loading-container"
+            style="grid-column: 1/-1; text-align: center; padding: 50px"
+          >
+            <div class="loading-spinner"></div>
+            <p style="margin-top: 15px; color: var(--gray)">
+              Đang tải danh mục...
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Featured Books Section -->
+      <section class="featured-books container animate-slideUp">
+        <h2 class="section-title">Sách nổi bật</h2>
+        <div class="book-grid">
+          <!-- Sách nổi bật sẽ được tải động bằng JavaScript -->
+          <div
+            class="loading-container"
+            style="grid-column: 1/-1; text-align: center; padding: 50px"
+          >
+            <div class="loading-spinner"></div>
+            <p style="margin-top: 15px; color: var(--gray)">
+              Đang tải sách nổi bật...
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- New Arrivals Section -->
+      <section class="new-arrivals container animate-slideUp">
+        <h2 class="section-title">Sách mới</h2>
+        <div class="book-grid">
+          <!-- Sách mới sẽ được tải động bằng JavaScript -->
+          <div
+            class="loading-container"
+            style="grid-column: 1/-1; text-align: center; padding: 50px"
+          >
+            <div class="loading-spinner"></div>
+            <p style="margin-top: 15px; color: var(--gray)">
+              Đang tải sách mới...
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- How It Works Section -->
+      <section class="how-it-works animate-slideUp">
+        <div class="container">
+          <h2 class="section-title" style="text-align: center; display: block">
+            Cách thức hoạt động
+          </h2>
+          <div class="steps-container">
+            <div class="step">
+              <div class="step-icon">1</div>
+              <h3>Tạo tài khoản</h3>
+              <p>
+                Đăng ký miễn phí và tạo tài khoản cá nhân của bạn chỉ trong vài
+                phút.
+              </p>
+            </div>
+            <div class="step">
+              <div class="step-icon">2</div>
+              <h3>Khám phá sách</h3>
+              <p>
+                Tìm kiếm sách theo danh mục, tác giả hoặc tiêu đề phù hợp với sở
+                thích của bạn.
+              </p>
+            </div>
+            <div class="step">
+              <div class="step-icon">3</div>
+              <h3>Tải xuống & Đọc</h3>
+              <p>
+                Tải xuống sách miễn phí và đọc trên bất kỳ thiết bị nào bạn
+                muốn.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container footer-container">
+        <div class="footer-col">
+          <h3>Ebook Haven</h3>
+          <p>
+            Thư viện sách điện tử cho mọi người yêu thích đọc sách và học hỏi.
+          </p>
+          <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3>Khám phá</h3>
+          <ul>
+            <li><a href="pages/categories.html">Danh mục</a></li>
+            <li><a href="pages/upload-book.html">Tải lên sách</a></li>
+            <li><a href="pages/profile.html">Trang cá nhân</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Liên kết</h3>
+          <ul>
+            <li><a href="#">Giới thiệu</a></li>
+            <li><a href="#">Điều khoản sử dụng</a></li>
+            <li><a href="#">Chính sách bảo mật</a></li>
+            <li><a href="#">Liên hệ</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Hỗ trợ</h3>
+          <ul>
+            <li><a href="#">Câu hỏi thường gặp</a></li>
+            <li><a href="#">Hướng dẫn sử dụng</a></li>
+            <li><a href="#">Báo cáo lỗi</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="container">
+        <div class="copyright">
+          &copy; 2025 Ebook Haven. Tất cả quyền được bảo lưu.
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../assets/js/notification.js"></script>
+    <script src="../assets/js/auth.service.js"></script>
+    <script src="../assets/js/image-utils.js"></script>
+    <script src="../assets/js/api.service.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <div id="notification-container"></div>
+  </body>
+</html>

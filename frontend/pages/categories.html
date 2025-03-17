@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <base href="/" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Danh mục sách - EBook Haven</title>
+    <link rel="stylesheet" href="../assets/css/normalize.css" />
+    <link rel="stylesheet" href="../assets/css/main.css" />
+    <link rel="stylesheet" href="../assets/css/responsive.css" />
+    <!-- Thêm vào <head> của tất cả trang -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      .categories-container {
+        padding: 40px 0;
+      }
+
+      .categories-header {
+        margin-bottom: 30px;
+      }
+
+      .category-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+
+      .category-item {
+        background-color: white;
+        padding: 10px 20px;
+        border-radius: 30px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .category-item:hover,
+      .category-item.active {
+        background-color: var(--primary);
+        color: white;
+      }
+
+      .category-books {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="container header-container">
+        <a href="../index.html" class="logo">Ebook<span>Haven</span></a>
+        <div class="search-bar">
+          <input type="text" placeholder="Tìm kiếm sách, tác giả..." />
+          <button><i class="fas fa-search"></i></button>
+        </div>
+        <div class="mobile-menu-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <ul class="nav-menu">
+          <li><a href="../index.html">Trang chủ</a></li>
+          <li><a href="categories.html">Danh mục</a></li>
+          <li><a href="upload-book.html">Tải lên sách</a></li>
+          <li><a href="#" id="login-btn">Đăng nhập</a></li>
+          <li>
+            <a href="#" id="register-btn">Đăng ký</a>
+          </li>
+        </ul>
+      </div>
+    </header>
+
+    <!-- Categories Page -->
+    <div class="container categories-container">
+      <div class="categories-header">
+        <h1>Danh mục sách</h1>
+        <p>Khám phá sách theo danh mục yêu thích của bạn</p>
+      </div>
+
+      <div class="category-list" id="category-list">
+        <!-- Categories will be loaded by JavaScript -->
+        <div class="category-item active" data-id="">Tất cả</div>
+      </div>
+
+      <div class="category-books">
+        <h2 id="category-title">Tất cả sách</h2>
+        <div class="book-grid" id="category-books-grid">
+          <!-- Books will be loaded by JavaScript -->
+        </div>
+
+        <div class="no-books" id="no-books" style="display: none">
+          <h3>Không tìm thấy sách nào</h3>
+          <p>Hãy thử chọn danh mục khác hoặc quay lại sau.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container footer-container">
+        <div class="footer-col">
+          <h3>Ebook Haven</h3>
+          <p>
+            Thư viện sách điện tử cho mọi người yêu thích đọc sách và học hỏi.
+          </p>
+          <!-- Thay thế trong tất cả trang -->
+          <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3>Khám phá</h3>
+          <ul>
+            <li><a href="categories.html">Danh mục</a></li>
+            <li><a href="upload-book.html">Tải lên sách</a></li>
+            <li><a href="profile.html">Trang cá nhân</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Liên kết</h3>
+          <ul>
+            <li><a href="#">Giới thiệu</a></li>
+            <li><a href="#">Điều khoản sử dụng</a></li>
+            <li><a href="#">Chính sách bảo mật</a></li>
+            <li><a href="#">Liên hệ</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Hỗ trợ</h3>
+          <ul>
+            <li><a href="#">Câu hỏi thường gặp</a></li>
+            <li><a href="#">Hướng dẫn sử dụng</a></li>
+            <li><a href="#">Báo cáo lỗi</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="container">
+        <div class="copyright">
+          &copy; 2025 Ebook Haven. Tất cả quyền được bảo lưu.
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../assets/js/api.service.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async function () {
+        let selectedCategoryId = "";
+
+        // Lấy tham số từ URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryIdParam = urlParams.get("id");
+
+        if (categoryIdParam) {
+          selectedCategoryId = categoryIdParam;
+        }
+
+        // Tải danh sách danh mục
+        try {
+          const categories = await apiService.categories.getAll();
+
+          const categoryList = document.getElementById("category-list");
+
+          // Đã có sẵn nút "Tất cả", nên chỉ thêm các danh mục khác
+          categories.forEach((category) => {
+            const categoryItem = document.createElement("div");
+            categoryItem.className = "category-item";
+            categoryItem.dataset.id = category.id;
+            categoryItem.textContent = category.name;
+
+            if (category.id.toString() === selectedCategoryId) {
+              categoryItem.classList.add("active");
+              document.getElementById("category-title").textContent =
+                category.name;
+              // Bỏ active của nút "Tất cả"
+              document
+                .querySelector('.category-item.active[data-id=""]')
+                .classList.remove("active");
+            }
+
+            categoryList.appendChild(categoryItem);
+          });
+
+          // Tải sách cho danh mục đã chọn
+          await loadCategoryBooks(selectedCategoryId);
+
+          // Xử lý sự kiện click danh mục
+          const categoryItems = document.querySelectorAll(".category-item");
+          categoryItems.forEach((item) => {
+            item.addEventListener("click", async function () {
+              // Bỏ active tất cả
+              categoryItems.forEach((i) => i.classList.remove("active"));
+
+              // Thêm active cho item được click
+              this.classList.add("active");
+
+              // Lấy id danh mục
+              selectedCategoryId = this.dataset.id;
+
+              // Cập nhật URL
+              if (selectedCategoryId) {
+                const url = new URL(window.location);
+                url.searchParams.set("id", selectedCategoryId);
+                window.history.pushState({}, "", url);
+              } else {
+                const url = new URL(window.location);
+                url.searchParams.delete("id");
+                window.history.pushState({}, "", url);
+              }
+
+              // Cập nhật tiêu đề
+              document.getElementById("category-title").textContent =
+                this.textContent === "Tất cả"
+                  ? "Tất cả sách"
+                  : this.textContent;
+
+              // Tải sách
+              await loadCategoryBooks(selectedCategoryId);
+            });
+          });
+        } catch (error) {
+          console.error("Error loading categories:", error);
+        }
+      });
+
+      // Hàm tải sách theo danh mục
+      async function loadCategoryBooks(categoryId) {
+        try {
+          let books;
+
+          if (categoryId) {
+            books = await apiService.categories.getBooks(categoryId);
+          } else {
+            books = await apiService.books.getAll();
+          }
+
+          const booksGrid = document.getElementById("category-books-grid");
+          const noBooks = document.getElementById("no-books");
+
+          if (books && books.length > 0) {
+            booksGrid.style.display = "grid";
+            noBooks.style.display = "none";
+
+            // Render sách
+            renderBooks(books, booksGrid);
+          } else {
+            booksGrid.style.display = "none";
+            noBooks.style.display = "block";
+          }
+        } catch (error) {
+          console.error("Error loading books:", error);
+        }
+      }
+    </script>
+    <div id="notification-container"></div>
+  </body>
+</html>
