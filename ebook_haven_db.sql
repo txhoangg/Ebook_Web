@@ -1,0 +1,1 @@
+SELECT * FROM ebook_haven_db.books;
