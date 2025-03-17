@@ -387,25 +387,46 @@
   </head>
   <body>
     <!-- Header -->
+    <!-- Header cho tất cả các trang -->
     <header>
       <div class="container header-container">
         <a href="../../index.html" class="logo">Ebook<span>Haven</span></a>
         <div class="search-bar">
-          <input type="text" placeholder="Tìm kiếm sách, tác giả..." />
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Tìm kiếm sách, tác giả..."
+          />
           <button><i class="fas fa-search"></i></button>
         </div>
-        <div class="mobile-menu-toggle">
+        <div class="mobile-menu-toggle" id="mobile-menu-toggle">
           <span></span>
           <span></span>
           <span></span>
         </div>
-        <ul class="nav-menu">
-          <li><a href="../../index.html">Trang chủ</a></li>
-          <li><a href="../categories.html">Danh mục</a></li>
-          <li><a href="../upload-book.html">Tải lên sách</a></li>
-          <li><a href="#" id="login-btn">Đăng nhập</a></li>
+        <ul class="nav-menu" id="nav-menu">
           <li>
-            <a href="#" id="register-btn">Đăng ký</a>
+            <a href="../../index.html"><i class="fas fa-home"></i> Trang chủ</a>
+          </li>
+          <li>
+            <a href="../categories.html"
+              ><i class="fas fa-tags"></i> Danh mục</a
+            >
+          </li>
+          <li>
+            <a href="../upload-book.html"
+              ><i class="fas fa-upload"></i> Tải lên sách</a
+            >
+          </li>
+          <li>
+            <a href="#" id="login-btn"
+              ><i class="fas fa-sign-in-alt"></i> Đăng nhập</a
+            >
+          </li>
+          <li>
+            <a href="#" id="register-btn"
+              ><i class="fas fa-user-plus"></i> Đăng ký</a
+            >
           </li>
         </ul>
       </div>
