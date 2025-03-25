@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="../assets/css/normalize.css" />
     <link rel="stylesheet" href="../assets/css/main.css" />
     <link rel="stylesheet" href="../assets/css/responsive.css" />
-    <!-- Thêm vào <head> của tất cả trang -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -50,8 +49,6 @@
     </style>
   </head>
   <body>
-    <!-- Header -->
-    <!-- Header cho tất cả các trang -->
     <header>
       <div class="container header-container">
         <a href="../index.html" class="logo">Ebook<span>Haven</span></a>
@@ -96,7 +93,6 @@
       </div>
     </header>
 
-    <!-- Categories Page -->
     <div class="container categories-container">
       <div class="categories-header">
         <h1>Danh mục sách</h1>
@@ -104,14 +100,13 @@
       </div>
 
       <div class="category-list" id="category-list">
-        <!-- Categories will be loaded by JavaScript -->
+
         <div class="category-item active" data-id="">Tất cả</div>
       </div>
 
       <div class="category-books">
         <h2 id="category-title">Tất cả sách</h2>
         <div class="book-grid" id="category-books-grid">
-          <!-- Books will be loaded by JavaScript -->
         </div>
 
         <div class="no-books" id="no-books" style="display: none">
@@ -121,7 +116,7 @@
       </div>
     </div>
 
-    <!-- Footer -->
+
     <footer>
       <div class="container footer-container">
         <div class="footer-col">
@@ -129,7 +124,7 @@
           <p>
             Thư viện sách điện tử cho mọi người yêu thích đọc sách và học hỏi.
           </p>
-          <!-- Thay thế trong tất cả trang -->
+
           <div class="social-icons">
             <a href="#"><i class="fab fa-facebook-f"></i></a>
             <a href="#"><i class="fab fa-twitter"></i></a>
@@ -169,14 +164,16 @@
       </div>
     </footer>
 
-    <!-- Scripts -->
+  
+    <script src="../assets/js/notification.js"></script>
+    <script src="../assets/js/auth.service.js"></script>
+    <script src="../assets/js/image-utils.js"></script>
     <script src="../assets/js/api.service.js"></script>
     <script src="../assets/js/main.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", async function () {
         let selectedCategoryId = "";
 
-        // Lấy tham số từ URL
         const urlParams = new URLSearchParams(window.location.search);
         const categoryIdParam = urlParams.get("id");
 
@@ -184,13 +181,11 @@
           selectedCategoryId = categoryIdParam;
         }
 
-        // Tải danh sách danh mục
         try {
           const categories = await apiService.categories.getAll();
 
           const categoryList = document.getElementById("category-list");
 
-          // Đã có sẵn nút "Tất cả", nên chỉ thêm các danh mục khác
           categories.forEach((category) => {
             const categoryItem = document.createElement("div");
             categoryItem.className = "category-item";
@@ -201,7 +196,6 @@
               categoryItem.classList.add("active");
               document.getElementById("category-title").textContent =
                 category.name;
-              // Bỏ active của nút "Tất cả"
               document
                 .querySelector('.category-item.active[data-id=""]')
                 .classList.remove("active");
@@ -210,23 +204,17 @@
             categoryList.appendChild(categoryItem);
           });
 
-          // Tải sách cho danh mục đã chọn
           await loadCategoryBooks(selectedCategoryId);
 
-          // Xử lý sự kiện click danh mục
           const categoryItems = document.querySelectorAll(".category-item");
           categoryItems.forEach((item) => {
             item.addEventListener("click", async function () {
-              // Bỏ active tất cả
               categoryItems.forEach((i) => i.classList.remove("active"));
 
-              // Thêm active cho item được click
               this.classList.add("active");
 
-              // Lấy id danh mục
               selectedCategoryId = this.dataset.id;
 
-              // Cập nhật URL
               if (selectedCategoryId) {
                 const url = new URL(window.location);
                 url.searchParams.set("id", selectedCategoryId);
@@ -237,13 +225,12 @@
                 window.history.pushState({}, "", url);
               }
 
-              // Cập nhật tiêu đề
               document.getElementById("category-title").textContent =
                 this.textContent === "Tất cả"
                   ? "Tất cả sách"
                   : this.textContent;
 
-              // Tải sách
+
               await loadCategoryBooks(selectedCategoryId);
             });
           });
@@ -252,7 +239,6 @@
         }
       });
 
-      // Hàm tải sách theo danh mục
       async function loadCategoryBooks(categoryId) {
         try {
           let books;
@@ -270,8 +256,11 @@
             booksGrid.style.display = "grid";
             noBooks.style.display = "none";
 
-            // Render sách
-            renderBooks(books, booksGrid);
+            if (typeof renderBooks === "function") {
+              renderBooks(books, booksGrid);
+            } else {
+              renderCategoryBooks(books, booksGrid);
+            }
           } else {
             booksGrid.style.display = "none";
             noBooks.style.display = "block";
@@ -279,6 +268,86 @@
         } catch (error) {
           console.error("Error loading books:", error);
         }
+      }
+
+      function renderCategoryBooks(books, container) {
+        if (!container) return;
+
+        container.innerHTML = "";
+
+        if (!books || books.length === 0) {
+          container.innerHTML = `
+            <div class="no-books-message">
+              <p>Không có sách nào được tìm thấy.</p>
+            </div>
+          `;
+          return;
+        }
+
+        books.forEach((book, index) => {
+
+          let coverPath = book.coverPath || "/api/placeholder/220/250";
+
+          if (typeof imageUtils !== "undefined") {
+            coverPath = imageUtils.processImagePath(book.coverPath);
+          } else if (
+            coverPath &&
+            !coverPath.startsWith("http") &&
+            !coverPath.startsWith("/")
+          ) {
+            coverPath = "/" + coverPath;
+          }
+
+          const bookCard = document.createElement("div");
+          bookCard.className = "book-card animate-item";
+          bookCard.setAttribute("data-index", index);
+
+          const isNew = book.createdAt
+            ? new Date(book.createdAt) >
+              new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+            : false;
+
+          let badgeHTML = "";
+          if (book.featured) {
+            badgeHTML = `<div class="book-badge featured">Nổi bật</div>`;
+          } else if (isNew) {
+            badgeHTML = `<div class="book-badge new">Mới</div>`;
+          }
+
+          bookCard.innerHTML = `
+            <div class="book-cover">
+              <img src="${coverPath}" 
+                   alt="${book.title}" 
+                   onerror="this.onerror=null; this.src='/api/placeholder/220/250';"
+                   loading="lazy">
+              ${badgeHTML}
+            </div>
+            <div class="book-info">
+              <div class="book-category">${
+                book.category?.name || "Không phân loại"
+              }</div>
+              <h3 class="book-title">${book.title}</h3>
+              <div class="book-author">${
+                book.author || "Không rõ tác giả"
+              }</div>
+              <div class="book-stats">
+                <span><i class="fas fa-star"></i> ${book.rating || "0"}</span>
+                <span><i class="fas fa-download"></i> ${
+                  book.downloadCount || "0"
+                }</span>
+              </div>
+            </div>
+          `;
+
+          bookCard.addEventListener("click", () => {
+            const pagesPath = window.location.pathname.includes("/pages/")
+              ? ""
+              : "pages/";
+            window.location.href = `${pagesPath}book-detail.html?id=${book.id}`;
+          });
+
+          container.appendChild(bookCard);
+        });
       }
     </script>
     <div id="notification-container"></div>

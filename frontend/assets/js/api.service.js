@@ -1,10 +1,8 @@
-// API Service - Quản lý các request đến backend
 const API_URL =
   window.location.hostname === "localhost"
     ? "http://localhost:5000/api"
     : "/api";
 
-// Xử lý lỗi chung
 const handleApiError = (error, defaultMessage) => {
   console.error(defaultMessage, error);
   return {
@@ -14,7 +12,6 @@ const handleApiError = (error, defaultMessage) => {
 };
 
 const apiService = {
-  // Xác thực
   auth: {
     login: async (credentials) => {
       try {
@@ -93,19 +90,14 @@ const apiService = {
       return user !== null && user.accessToken !== undefined;
     },
 
-    // Kiểm tra token còn hạn sử dụng hay không
     checkTokenValidity: () => {
       const user = apiService.auth.getCurrentUser();
       if (!user || !user.accessToken) return false;
 
-      // Thêm logic kiểm tra token hết hạn nếu cần
       return true;
     },
   },
 
-  // Phần còn lại của apiService...
-
-  // Người dùng
   users: {
     getProfile: async () => {
       const token = apiService.auth.getCurrentUser()?.accessToken;
@@ -140,11 +132,9 @@ const apiService = {
       const result = await response.json();
       console.log("Kết quả cập nhật từ API:", result);
 
-      // Nếu cập nhật thành công, cập nhật thông tin user trong localStorage
       if (result.success || result.message?.includes("thành công")) {
         const currentUser = apiService.auth.getCurrentUser();
         if (currentUser) {
-          // Cập nhật thông tin người dùng trong localStorage
           const updatedUser = {
             ...currentUser,
             displayName: data.displayName || currentUser.displayName,
@@ -234,12 +224,10 @@ const apiService = {
     },
   },
 
-  // Sách
   books: {
     getAll: async (params = {}) => {
       let url = `${API_URL}/books`;
 
-      // Xử lý query params
       if (Object.keys(params).length > 0) {
         const queryString = new URLSearchParams(params).toString();
         url = `${url}?${queryString}`;
@@ -255,7 +243,6 @@ const apiService = {
     },
 
     getFeatured: async () => {
-      // Sửa ở đây: Thêm route chuyên biệt hoặc sử dụng đúng cú pháp query
       const response = await fetch(`${API_URL}/books/featured`);
       return response.json();
     },
@@ -273,19 +260,16 @@ const apiService = {
 
       const formData = new FormData();
 
-      // Chuyển đổi dữ liệu thành FormData để upload file
       Object.keys(bookData).forEach((key) => {
         if (key !== "file" && key !== "cover") {
           formData.append(key, bookData[key]);
         }
       });
 
-      // Thêm file sách
       if (bookData.file) {
         formData.append("file", bookData.file);
       }
 
-      // Thêm ảnh bìa
       if (bookData.cover) {
         formData.append("cover", bookData.cover);
       }
@@ -307,19 +291,16 @@ const apiService = {
 
       const formData = new FormData();
 
-      // Chuyển đổi dữ liệu thành FormData để upload file
       Object.keys(bookData).forEach((key) => {
         if (key !== "file" && key !== "cover") {
           formData.append(key, bookData[key]);
         }
       });
 
-      // Thêm file sách nếu có
       if (bookData.file) {
         formData.append("file", bookData.file);
       }
 
-      // Thêm ảnh bìa nếu có
       if (bookData.cover) {
         formData.append("cover", bookData.cover);
       }
@@ -353,7 +334,6 @@ const apiService = {
       const token = apiService.auth.getCurrentUser()?.accessToken;
       console.log(`Downloading book ${id} with token: ${token ? "Yes" : "No"}`);
 
-      // Thêm token vào query string để backend có thể nhận
       const downloadUrl = token
         ? `${API_URL}/books/${id}/download?token=${token}`
         : `${API_URL}/books/${id}/download`;
@@ -383,7 +363,6 @@ const apiService = {
     },
   },
 
-  // Danh mục
   categories: {
     getAll: async () => {
       const response = await fetch(`${API_URL}/categories`);
@@ -446,8 +425,7 @@ const apiService = {
       return response.json();
     },
   },
-  // Admin
-  // Sửa đổi phần admin API service
+
   admin: {
     getStats: async () => {
       const token = apiService.auth.getCurrentUser()?.accessToken;
@@ -500,7 +478,6 @@ const apiService = {
 
       let url = `${API_URL}/admin/books`;
 
-      // Xử lý query params
       if (Object.keys(params).length > 0) {
         const queryString = new URLSearchParams(params).toString();
         url = `${url}?${queryString}`;
@@ -521,7 +498,6 @@ const apiService = {
 
       let url = `${API_URL}/admin/users`;
 
-      // Xử lý query params
       if (Object.keys(params).length > 0) {
         const queryString = new URLSearchParams(params).toString();
         url = `${url}?${queryString}`;
@@ -536,15 +512,12 @@ const apiService = {
       return response.json();
     },
 
-    // Cập nhật phương thức này để chấp nhận tham số featured
     updateBookStatus: async (bookId, status, featured = null) => {
       const token = apiService.auth.getCurrentUser()?.accessToken;
       if (!token) throw new Error("Authentication required");
 
-      // Tạo object data với status
       const data = { status };
 
-      // Thêm featured vào nếu được cung cấp
       if (featured !== null) {
         data.featured = featured;
       }

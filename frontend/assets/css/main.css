@@ -1,5 +1,4 @@
 :root {
-  /* Chọn bảng màu hiện đại hơn */
   --primary: #4361ee;
   --primary-dark: #3a56d4;
   --secondary: #2ec4b6;
@@ -13,17 +12,17 @@
   --warning: #ffd166;
   --success: #06d6a0;
 
-  /* Thêm các biến cho shadow */
+ 
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
   --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 
-  /* Viền */
+
   --radius-sm: 4px;
   --radius: 8px;
   --radius-lg: 16px;
 
-  /* Transition */
+
   --transition: all 0.3s ease;
 }
 
@@ -58,7 +57,7 @@ a:hover {
   padding: 0 20px;
 }
 
-/* Header Styles */
+
 header {
   background-color: white;
   box-shadow: var(--shadow);
@@ -234,7 +233,7 @@ header {
   filter: brightness(0.9);
 }
 
-/* Hero Section */
+
 .hero {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
@@ -282,7 +281,7 @@ header {
   opacity: 0.9;
 }
 
-/* Categories */
+
 .categories {
   margin-bottom: 60px;
 }
@@ -356,7 +355,7 @@ header {
   font-size: 0.9rem;
 }
 
-/* Featured Books */
+
 .featured-books,
 .new-arrivals {
   margin-bottom: 60px;
@@ -456,7 +455,7 @@ header {
   margin-right: 5px;
 }
 
-/* How It Works */
+
 .how-it-works {
   background-color: white;
   padding: 80px 0;
@@ -514,7 +513,7 @@ header {
   line-height: 1.5;
 }
 
-/* Arrow between steps */
+
 .step:not(:last-child):after {
   content: "→";
   position: absolute;
@@ -525,7 +524,7 @@ header {
   color: var(--primary);
 }
 
-/* Footer */
+
 footer {
   background-color: var(--dark);
   color: white;
@@ -616,7 +615,6 @@ footer {
   color: rgba(255, 255, 255, 0.6);
 }
 
-/* Login/Register Modal */
 .modal {
   display: none;
   position: fixed;
@@ -777,7 +775,7 @@ footer {
   font-weight: 500;
 }
 
-/* Book Detail Page */
+
 .book-detail {
   padding: 50px 0;
 }
@@ -871,7 +869,7 @@ footer {
   margin-top: 60px;
 }
 
-/* Profile page */
+
 .user-menu {
   position: relative;
 }
@@ -924,7 +922,7 @@ footer {
   border-bottom: none;
 }
 
-/* Animations */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -953,7 +951,7 @@ footer {
   animation: slideUp 0.5s ease forwards;
 }
 
-/* Loading Spinner */
+
 .loading-spinner {
   display: inline-block;
   width: 50px;
@@ -970,7 +968,7 @@ footer {
   }
 }
 
-/* Notification System */
+
 #notification-container {
   position: fixed;
   top: 20px;
@@ -1071,7 +1069,6 @@ footer {
   }
 }
 
-/* Mobile menu */
 .mobile-menu-toggle {
   display: none;
   flex-direction: column;

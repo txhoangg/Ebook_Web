@@ -4,7 +4,6 @@ const users = require("../controllers/user.controller");
 const { authJwt } = require("../middlewares");
 
 module.exports = (app) => {
-  // Middleware kiểm tra xác thực
   router.use((req, res, next) => {
     res.header(
       "Access-Control-Allow-Headers",

@@ -8,13 +8,11 @@
     <link rel="stylesheet" href="../assets/css/normalize.css" />
     <link rel="stylesheet" href="../assets/css/main.css" />
     <link rel="stylesheet" href="../assets/css/responsive.css" />
-    <!-- Thêm vào <head> của tất cả trang -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <style>
-      /* Thêm CSS cho trang upload */
       .upload-container {
         padding: 30px 0;
       }
@@ -107,8 +105,6 @@
     </style>
   </head>
   <body>
-    <!-- Header -->
-    <!-- Header cho tất cả các trang -->
     <header>
       <div class="container header-container">
         <a href="../index.html" class="logo">Ebook<span>Haven</span></a>
@@ -153,7 +149,6 @@
       </div>
     </header>
 
-    <!-- Upload Page -->
     <div class="container upload-container">
       <h1>Tải lên sách mới</h1>
       <p>
@@ -186,7 +181,6 @@
                 >
                 <select id="category" name="categoryId" required>
                   <option value="">-- Chọn danh mục --</option>
-                  <!-- Danh mục sẽ được thêm bằng JavaScript -->
                 </select>
               </div>
 
@@ -295,7 +289,6 @@
       </div>
     </div>
 
-    <!-- Footer -->
     <footer>
       <div class="container footer-container">
         <div class="footer-col">
@@ -303,7 +296,6 @@
           <p>
             Thư viện sách điện tử cho mọi người yêu thích đọc sách và học hỏi.
           </p>
-          <!-- Thay thế trong tất cả trang -->
           <div class="social-icons">
             <a href="#"><i class="fab fa-facebook-f"></i></a>
             <a href="#"><i class="fab fa-twitter"></i></a>
@@ -343,17 +335,13 @@
       </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="../assets/js/api.service.js"></script>
     <script src="../assets/js/main.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", async function () {
-        // Kiểm tra đăng nhập
         if (!apiService.auth.isAuthenticated()) {
-          // Nếu chưa đăng nhập, chuyển về trang đăng nhập
           showAuthModal("login");
 
-          // Disable form
           document.getElementById("book-upload-form").classList.add("disabled");
           document.getElementById("upload-button").disabled = true;
 
@@ -361,7 +349,6 @@
           return;
         }
 
-        // Tải danh sách danh mục
         try {
           const categories = await apiService.categories.getAll();
           const categorySelect = document.getElementById("category");
@@ -376,12 +363,10 @@
           console.error("Error loading categories:", error);
         }
 
-        // Xử lý kéo thả file sách
         const bookFileUpload = document.getElementById("book-file-upload");
         const bookFileInput = document.getElementById("book-file");
         const bookFileInfo = document.getElementById("book-file-info");
 
-        // Kéo thả
         bookFileUpload.addEventListener("dragover", function (e) {
           e.preventDefault();
           this.classList.add("dragover");
@@ -401,18 +386,15 @@
           }
         });
 
-        // Xử lý thay đổi file sách
         bookFileInput.addEventListener("change", function () {
           updateFileInfo(this, bookFileInfo);
         });
 
-        // Xử lý kéo thả ảnh bìa
         const coverFileUpload = document.getElementById("cover-file-upload");
         const coverFileInput = document.getElementById("cover-file");
         const coverFileInfo = document.getElementById("cover-file-info");
         const coverPreview = document.getElementById("cover-preview");
 
-        // Kéo thả
         coverFileUpload.addEventListener("dragover", function (e) {
           e.preventDefault();
           this.classList.add("dragover");
@@ -433,7 +415,6 @@
           }
         });
 
-        // Xử lý thay đổi file ảnh bìa
         coverFileInput.addEventListener("change", function () {
           updateFileInfo(this, coverFileInfo);
           if (this.files && this.files[0]) {
@@ -441,7 +422,6 @@
           }
         });
 
-        // Xem trước ảnh bìa
         function previewCover(file) {
           if (!file.type.match("image.*")) {
             return;
@@ -456,7 +436,6 @@
           reader.readAsDataURL(file);
         }
 
-        // Cập nhật thông tin file
         function updateFileInfo(input, infoElement) {
           if (input.files && input.files[0]) {
             const file = input.files[0];
@@ -471,7 +450,6 @@
           }
         }
 
-        // Format kích thước file
         function formatFileSize(bytes) {
           if (bytes >= 1024 * 1024) {
             return (bytes / (1024 * 1024)).toFixed(2) + " MB";
@@ -482,7 +460,6 @@
           }
         }
 
-        // Xử lý nút hủy
         document
           .getElementById("cancel-button")
           .addEventListener("click", function () {
@@ -491,22 +468,18 @@
             }
           });
 
-        // Xử lý submit form
         document
           .getElementById("book-upload-form")
           .addEventListener("submit", async function (e) {
             e.preventDefault();
 
-            // Kiểm tra đăng nhập
             if (!apiService.auth.isAuthenticated()) {
               showAuthModal("login");
               return;
             }
 
-            // Lấy dữ liệu form
             const formData = new FormData();
 
-            // Thêm các trường dữ liệu
             formData.append("title", document.getElementById("title").value);
             formData.append("author", document.getElementById("author").value);
             formData.append(
@@ -537,7 +510,6 @@
               formData.append("isbn", isbn);
             }
 
-            // Thêm file sách
             const bookFile = document.getElementById("book-file").files[0];
             if (!bookFile) {
               alert("Vui lòng chọn file sách!");
@@ -545,19 +517,16 @@
             }
             formData.append("file", bookFile);
 
-            // Thêm ảnh bìa (nếu có)
             const coverFile = document.getElementById("cover-file").files[0];
             if (coverFile) {
               formData.append("cover", coverFile);
             }
 
-            // Disable nút submit
             const uploadButton = document.getElementById("upload-button");
             uploadButton.disabled = true;
             uploadButton.textContent = "Đang tải lên...";
 
             try {
-              // Gọi API tải sách
               const response = await apiService.books.create({
                 title: document.getElementById("title").value,
                 author: document.getElementById("author").value,
@@ -571,13 +540,10 @@
                 cover: coverFile || null,
               });
 
-              // Nếu thành công
               if (response.id) {
                 alert("Tải sách lên thành công!");
-                // Chuyển đến trang chi tiết sách vừa tải lên
                 window.location.href = `book-detail.html?id=${response.id}`;
               } else {
-                // Lỗi
                 alert(response.message || "Lỗi khi tải sách lên!");
                 uploadButton.disabled = false;
                 uploadButton.textContent = "Tải lên";

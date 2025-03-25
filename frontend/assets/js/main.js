@@ -1,4 +1,3 @@
-// Global state
 const state = {
   isAuthenticated: false,
   currentUser: null,
@@ -8,59 +7,41 @@ const state = {
   isLoading: false,
 };
 
-/**
- * Hàm tiện ích để lấy đường dẫn chính xác dựa trên vị trí hiện tại
- */
 function getCorrectPath(path) {
-  // Nếu đường dẫn đã bắt đầu bằng '/' tức là đường dẫn tuyệt đối, trả về nguyên bản.
   if (path.startsWith("/")) {
     return path;
   }
 
-  // Nếu trang hiện tại nằm trong thư mục "pages"
   if (window.location.pathname.includes("/pages/")) {
-    // Nếu path bắt đầu bằng "pages/", loại bỏ phần "pages/" để không bị lặp.
     if (path.startsWith("pages/")) {
       return path.replace(/^pages\//, "");
     }
     return path;
   }
 
-  // Nếu trang hiện tại không ở trong thư mục "pages", thêm "pages/" vào đầu.
   return "pages/" + path;
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
-  // Initialize loading indicators
   initializeLoadingState();
 
-  // Check authentication and update UI
   await checkAuthAndUpdateUI();
 
-  // Initialize mobile menu
   initializeMobileMenu();
 
-  // Handle search
   setupSearch();
 
-  // Initialize auth modals
   setupAuthModals();
 
-  // Handle page-specific content
   loadPageSpecificContent();
 
-  // Initialize animations
   initAnimations();
 
-  // Initialize lazy loading for images
   if (typeof imageUtils !== "undefined") {
     imageUtils.initLazyLoading();
   }
 });
 
-/**
- * Initialize loading state indicators
- */
 function initializeLoadingState() {
   state.isLoading = true;
   const loaders = document.querySelectorAll(".loading-container");
@@ -69,9 +50,6 @@ function initializeLoadingState() {
   });
 }
 
-/**
- * Complete loading state
- */
 function completeLoading() {
   state.isLoading = false;
   const loaders = document.querySelectorAll(".loading-container");
@@ -80,27 +58,25 @@ function completeLoading() {
   });
 }
 
-/**
- * Check authentication and update UI accordingly
- */
+
 async function checkAuthAndUpdateUI() {
   try {
-    // Kiểm tra xem có token hợp lệ không
+
     const isLoggedIn = apiService.auth.isAuthenticated();
 
     if (isLoggedIn) {
       state.isAuthenticated = true;
       state.currentUser = apiService.auth.getCurrentUser();
 
-      // Cập nhật UI dựa trên trạng thái đăng nhập
+
       updateAuthenticatedUI(state.currentUser);
 
-      // Hiển thị thông báo chào mừng cho người dùng quay lại
+
       const lastVisitTime = localStorage.getItem("lastVisitTime");
       const currentTime = new Date().getTime();
 
       if (!lastVisitTime || currentTime - lastVisitTime > 24 * 60 * 60 * 1000) {
-        // Nếu lần đầu ghé thăm hoặc hơn 24 giờ kể từ lần cuối
+    
         if (typeof notifications !== "undefined") {
           notifications.success(
             `Chào mừng trở lại, ${
@@ -110,10 +86,10 @@ async function checkAuthAndUpdateUI() {
         }
       }
 
-      // Cập nhật thời gian ghé thăm cuối
+  
       localStorage.setItem("lastVisitTime", currentTime);
     } else {
-      // Người dùng chưa đăng nhập
+ 
       updateUnauthenticatedUI();
     }
   } catch (error) {
@@ -122,9 +98,7 @@ async function checkAuthAndUpdateUI() {
   }
 }
 
-/**
- * Update UI for authenticated users
- */
+
 function updateAuthenticatedUI(user) {
   const loginBtn = document.getElementById("login-btn");
   const registerBtn = document.getElementById("register-btn");
@@ -132,15 +106,15 @@ function updateAuthenticatedUI(user) {
 
   if (!loginBtn || !registerBtn || !navMenu) return;
 
-  // Hide login/register buttons
+
   loginBtn.style.display = "none";
   registerBtn.style.display = "none";
 
-  // Add user menu item
+
   const userMenuItem = document.createElement("li");
   userMenuItem.className = "user-menu-item";
 
-  // Create user avatar/initial for the dropdown toggle
+
   const userInitial = user.displayName
     ? user.displayName.charAt(0).toUpperCase()
     : user.username.charAt(0).toUpperCase();
@@ -169,7 +143,7 @@ function updateAuthenticatedUI(user) {
 
   navMenu.appendChild(userMenuItem);
 
-  // Style for user avatar
+ 
   const style = document.createElement("style");
   style.textContent = `
     .user-avatar {
@@ -202,20 +176,20 @@ function updateAuthenticatedUI(user) {
   `;
   document.head.appendChild(style);
 
-  // Handle logout
+
   document.getElementById("logout-btn").addEventListener("click", function (e) {
     e.preventDefault();
 
-    // Show confirmation
+   
     if (confirm("Bạn có chắc muốn đăng xuất?")) {
       apiService.auth.logout();
 
-      // Show logout notification
+   
       if (typeof notifications !== "undefined") {
         notifications.info("Đăng xuất thành công!");
       }
 
-      // Reload page after a short delay
+    
       setTimeout(() => {
         window.location.reload();
       }, 1000);
@@ -223,14 +197,12 @@ function updateAuthenticatedUI(user) {
   });
 }
 
-/**
- * Update UI for unauthenticated users
- */
+
 function updateUnauthenticatedUI() {
   state.isAuthenticated = false;
   state.currentUser = null;
 
-  // Ensure login/register buttons are visible
+
   const loginBtn = document.getElementById("login-btn");
   const registerBtn = document.getElementById("register-btn");
 
@@ -238,9 +210,7 @@ function updateUnauthenticatedUI() {
   if (registerBtn) registerBtn.style.display = "block";
 }
 
-/**
- * Initialize mobile menu
- */
+
 function initializeMobileMenu() {
   const mobileMenuToggle = document.getElementById("mobile-menu-toggle");
   const navMenu = document.getElementById("nav-menu");
@@ -251,7 +221,7 @@ function initializeMobileMenu() {
       navMenu.classList.toggle("active");
     });
 
-    // Close menu when clicking outside
+   
     document.addEventListener("click", function (event) {
       if (
         !event.target.closest(".nav-menu") &&
@@ -265,9 +235,7 @@ function initializeMobileMenu() {
   }
 }
 
-/**
- * Setup search functionality
- */
+
 function setupSearch() {
   const searchBar = document.querySelector(".search-bar");
   const searchInput = document.getElementById("search-input");
@@ -278,7 +246,7 @@ function setupSearch() {
       const searchQuery = searchInput.value.trim();
 
       if (searchQuery) {
-        // Determine the correct path depending on current location
+  
         const pagesPath = window.location.pathname.includes("/pages/")
           ? ""
           : "pages/";
@@ -288,7 +256,7 @@ function setupSearch() {
       }
     });
 
-    // Add placeholder animation to search input
+
     const placeholders = [
       "Tìm kiếm sách...",
       "Tìm tác giả...",
@@ -307,14 +275,11 @@ function setupSearch() {
       }
     };
 
-    // Change placeholder every 3 seconds
     setInterval(cyclePlaceholders, 3000);
   }
 }
 
-/**
- * Setup authentication modals (login/register)
- */
+
 function setupAuthModals() {
   const loginBtn = document.getElementById("login-btn");
   const registerBtn = document.getElementById("register-btn");
@@ -334,23 +299,21 @@ function setupAuthModals() {
   }
 }
 
-/**
- * Show authentication modal
- */
+
 function showAuthModal(type) {
-  // Create modal if it doesn't exist
+
   if (!document.querySelector(".auth-modal")) {
     createAuthModal();
   }
 
-  // Show modal and set active tab
+
   const modal = document.querySelector(".auth-modal");
   modal.classList.add("active");
 
-  // Set active tab
+
   setActiveAuthTab(type);
 
-  // Add escape key listener
+
   document.addEventListener("keydown", function escHandler(e) {
     if (e.key === "Escape") {
       closeAuthModal();
@@ -359,9 +322,7 @@ function showAuthModal(type) {
   });
 }
 
-/**
- * Create authentication modal
- */
+
 function createAuthModal() {
   const modalHTML = `
     <div class="auth-modal">
@@ -480,10 +441,10 @@ function createAuthModal() {
     </div>
   `;
 
-  // Add modal to document
+ 
   document.body.insertAdjacentHTML("beforeend", modalHTML);
 
-  // Add CSS for auth modal
+ 
   const style = document.createElement("style");
   style.textContent = `
     .auth-modal {
@@ -716,13 +677,11 @@ function createAuthModal() {
   `;
   document.head.appendChild(style);
 
-  // Setup event listeners
+
   setupAuthModalEvents();
 }
 
-/**
- * Setup auth modal events
- */
+
 function setupAuthModalEvents() {
   const modal = document.querySelector(".auth-modal");
   const backdrop = document.querySelector(".auth-modal-backdrop");
@@ -732,20 +691,20 @@ function setupAuthModalEvents() {
   const registerForm = document.getElementById("register-form");
   const passwordToggles = document.querySelectorAll(".password-toggle");
 
-  // Close modal on backdrop click
+ 
   backdrop.addEventListener("click", closeAuthModal);
 
-  // Close modal on close button click
+
   closeBtn.addEventListener("click", closeAuthModal);
 
-  // Tab switching
+
   tabs.forEach((tab) => {
     tab.addEventListener("click", function () {
       setActiveAuthTab(this.dataset.tab);
     });
   });
 
-  // Password visibility toggle
+ 
   passwordToggles.forEach((toggle) => {
     toggle.addEventListener("click", function () {
       const passwordInput = this.previousElementSibling;
@@ -762,7 +721,7 @@ function setupAuthModalEvents() {
     });
   });
 
-  // Login form submission
+ 
   loginForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
@@ -770,47 +729,47 @@ function setupAuthModalEvents() {
     const password = document.getElementById("login-password").value;
     const rememberMe = document.getElementById("remember-me").checked;
 
-    // Validate inputs
+
     if (!username || !password) {
       showAuthMessage("Vui lòng nhập đầy đủ thông tin!", "error");
       return;
     }
 
     try {
-      // Show loading state
+
       const submitBtn = loginForm.querySelector('button[type="submit"]');
       const originalBtnText = submitBtn.innerHTML;
       submitBtn.innerHTML =
         '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
       submitBtn.disabled = true;
 
-      // Call API
+
       const response = await apiService.auth.login({ username, password });
 
-      // Handle success
+
       if (response.accessToken) {
-        // Store authentication status
+  
         apiService.auth.setUser(response);
 
-        // Show success message
+
         showAuthMessage("Đăng nhập thành công!", "success");
 
-        // Store remember me preference
+  
         if (rememberMe) {
           localStorage.setItem("remember", true);
         } else {
           localStorage.removeItem("remember");
         }
 
-        // Reload page after a short delay
+        
         setTimeout(() => {
           window.location.reload();
         }, 1500);
       } else {
-        // Show error message
+
         showAuthMessage(response.message || "Đăng nhập thất bại!", "error");
 
-        // Reset button
+
         submitBtn.innerHTML = originalBtnText;
         submitBtn.disabled = false;
       }
@@ -818,13 +777,13 @@ function setupAuthModalEvents() {
       showAuthMessage("Lỗi kết nối server!", "error");
       console.error("Login error:", error);
 
-      // Reset button
+
       submitBtn.innerHTML = originalBtnText;
       submitBtn.disabled = false;
     }
   });
 
-  // Register form submission
+
   registerForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
@@ -835,66 +794,66 @@ function setupAuthModalEvents() {
       "register-confirm-password"
     ).value;
 
-    // Validate inputs
+
     if (!username || !email || !password || !confirmPassword) {
       showAuthMessage("Vui lòng nhập đầy đủ thông tin!", "error");
       return;
     }
 
-    // Validate email format
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       showAuthMessage("Email không hợp lệ!", "error");
       return;
     }
 
-    // Validate password match
+
     if (password !== confirmPassword) {
       showAuthMessage("Mật khẩu xác nhận không khớp!", "error");
       return;
     }
 
-    // Validate password strength
+
     if (password.length < 6) {
       showAuthMessage("Mật khẩu phải có ít nhất 6 ký tự!", "error");
       return;
     }
 
     try {
-      // Show loading state
+   
       const submitBtn = registerForm.querySelector('button[type="submit"]');
       const originalBtnText = submitBtn.innerHTML;
       submitBtn.innerHTML =
         '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
       submitBtn.disabled = true;
 
-      // Call API
+     
       const response = await apiService.auth.register({
         username,
         email,
         password,
       });
 
-      // Handle response
+  
       if (response.message && !response.error) {
-        // Show success message
+    
         showAuthMessage(
           "Đăng ký thành công! Bạn có thể đăng nhập ngay.",
           "success"
         );
 
-        // Switch to login tab after a delay
+
         setTimeout(() => {
           setActiveAuthTab("login");
 
-          // Pre-fill login form
+
           document.getElementById("login-username").value = username;
         }, 2000);
       } else {
-        // Show error message
+    
         showAuthMessage(response.message || "Đăng ký thất bại!", "error");
 
-        // Reset button
+     
         submitBtn.innerHTML = originalBtnText;
         submitBtn.disabled = false;
       }
@@ -902,13 +861,13 @@ function setupAuthModalEvents() {
       showAuthMessage("Lỗi kết nối server!", "error");
       console.error("Register error:", error);
 
-      // Reset button
+  
       submitBtn.innerHTML = originalBtnText;
       submitBtn.disabled = false;
     }
   });
 
-  // Fake social auth (just a demo)
+
   const socialButtons = document.querySelectorAll(".social-auth .btn");
   socialButtons.forEach((btn) => {
     btn.addEventListener("click", function () {
@@ -920,27 +879,25 @@ function setupAuthModalEvents() {
   });
 }
 
-/**
- * Set active authentication tab
- */
+
 function setActiveAuthTab(tabName) {
-  // Update tab buttons
+
   document.querySelectorAll(".auth-tab").forEach((tab) => {
     tab.classList.toggle("active", tab.dataset.tab === tabName);
   });
 
-  // Update form visibility
+ 
   document.querySelectorAll(".auth-form").forEach((form) => {
     form.classList.toggle("active", form.id === `${tabName}-form`);
   });
 
-  // Update modal title
+
   const modalTitle = document.getElementById("auth-modal-title");
   if (modalTitle) {
     modalTitle.textContent = tabName === "login" ? "Đăng nhập" : "Đăng ký";
   }
 
-  // Clear any messages
+
   const messageEl = document.getElementById("auth-message");
   if (messageEl) {
     messageEl.className = "auth-message";
@@ -948,9 +905,7 @@ function setActiveAuthTab(tabName) {
   }
 }
 
-/**
- * Show authentication message
- */
+
 function showAuthMessage(message, type) {
   const messageEl = document.getElementById("auth-message");
   if (messageEl) {
@@ -959,9 +914,7 @@ function showAuthMessage(message, type) {
   }
 }
 
-/**
- * Close authentication modal
- */
+
 function closeAuthModal() {
   const modal = document.querySelector(".auth-modal");
   if (modal) {
@@ -969,17 +922,15 @@ function closeAuthModal() {
   }
 }
 
-/**
- * Load page-specific content
- */
+
 function loadPageSpecificContent() {
-  // Check if we're on the home page
+
   if (document.getElementById("home-page")) {
     console.log("Trang chủ được phát hiện, đang tải nội dung...");
     loadHomePage();
   }
 
-  // Check for book detail page
+
   const urlParams = new URLSearchParams(window.location.search);
   if (
     urlParams.has("id") &&
@@ -988,7 +939,7 @@ function loadPageSpecificContent() {
     loadBookDetail(urlParams.get("id"));
   }
 
-  // Check for search results page
+
   if (
     urlParams.has("q") &&
     window.location.href.includes("search-results.html")
@@ -996,20 +947,18 @@ function loadPageSpecificContent() {
     loadSearchResults(urlParams.get("q"));
   }
 
-  // Check for category page
+
   if (urlParams.has("id") && window.location.href.includes("categories.html")) {
     loadCategoryPage(urlParams.get("id"));
   }
 }
 
-/**
- * Load homepage content
- */
+
 async function loadHomePage() {
   try {
     console.log("Đang tải trang chủ...");
 
-    // Load categories
+  
     const categories = await apiService.categories.getAll();
     console.log("Danh mục đã tải:", categories);
     state.categories = categories;
@@ -1018,7 +967,7 @@ async function loadHomePage() {
     if (categoryGrid) {
       console.log("Đã tìm thấy phần tử .category-grid");
 
-      // Kiểm tra mảng categories
+
       if (!categories || categories.length === 0) {
         console.log("Không có danh mục nào để hiển thị");
         categoryGrid.innerHTML = "<p>Không có danh mục nào.</p>";
@@ -1030,7 +979,7 @@ async function loadHomePage() {
       console.error("Không tìm thấy phần tử .category-grid");
     }
 
-    // Load featured books
+
     try {
       console.log("Đang tải sách nổi bật...");
       const featuredBooks = await apiService.books.getFeatured();
@@ -1056,7 +1005,7 @@ async function loadHomePage() {
       }
     }
 
-    // Load new books
+
     try {
       console.log("Đang tải sách mới...");
       const newBooks = await apiService.books.getLatest();
@@ -1080,7 +1029,7 @@ async function loadHomePage() {
       }
     }
 
-    // Complete loading
+
     completeLoading();
   } catch (error) {
     console.error("Error loading homepage:", error);
@@ -1088,9 +1037,7 @@ async function loadHomePage() {
   }
 }
 
-/**
- * Render categories
- */
+
 function renderCategories(categories, container) {
   console.log("Đang render danh mục:", categories);
   if (!container) {
@@ -1100,20 +1047,21 @@ function renderCategories(categories, container) {
 
   container.innerHTML = "";
 
-  // Kiểm tra lại mảng categories
+
   if (!categories || categories.length === 0) {
     console.log("Không có danh mục để hiển thị");
     container.innerHTML = "<p>Không có danh mục nào để hiển thị.</p>";
     return;
   }
 
-  // Create grid-based layout
+
   categories.forEach((category) => {
     const categoryEl = document.createElement("div");
     categoryEl.className = "category-card animate-item";
 
-    // Get an icon based on category name - simple mapping
+
     const iconMap = {
+      // Danh mục hiện có
       "Văn học": "book",
       "Kinh tế": "chart-line",
       "Khoa học": "flask",
@@ -1121,11 +1069,81 @@ function renderCategories(categories, container) {
       "Lịch sử": "landmark",
       "Tâm lý": "brain",
       "Nghệ thuật": "palette",
-      "Y học": "heartbeat",
+      "Y học": "user-doctor",
       "Giáo dục": "graduation-cap",
+
+      "Tiểu thuyết": "book-open",
+      "Truyện ngắn": "bookmark",
+      Thơ: "feather",
+      "Truyện tranh": "image",
+      "Ngôn tình": "heart",
+      "Kinh điển": "book-journal-whills",
+      "Hồi ký": "book-bookmark",
+
+
+      "Toán học": "square-root-variable",
+      "Vật lý": "atom",
+      "Sinh học": "dna",
+      "Triết học": "lightbulb",
+      "Ngôn ngữ": "language",
+      "Xã hội học": "users",
+      "Tâm lý học": "brain",
+      "Chính trị": "landmark-dome",
+      "Pháp luật": "scale-balanced",
+      "Kinh tế học": "coins",
+
+      "Kỹ năng sống": "hands",
+      "Phát triển bản thân": "person-rays",
+      "Kinh doanh": "wallet",
+      "Quản lý thời gian": "clock",
+      "Làm giàu": "money-bill-trend-up",
+      "Khởi nghiệp": "rocket",
+      Marketing: "bullhorn",
+      "Bán hàng": "store",
+      "Quản lý": "users-gear",
+      "Lãnh đạo": "crown",
+
+  
+      "Du lịch": "plane",
+      "Ẩm thực": "utensils",
+      "Thể thao": "person-running",
+      "Âm nhạc": "music",
+      "Điện ảnh": "film",
+      "Nhiếp ảnh": "camera",
+      "Làm vườn": "seedling",
+      "Thủ công": "scissors",
+      Game: "gamepad",
+
+      "Kĩ thuật": "screwdriver-wrench",
+      "Kiến trúc": "drafting-compass",
+      "Thiết kế": "pen-ruler",
+      "Nông nghiệp": "wheat-awn",
+      "Môi trường": "leaf",
+      "Công nghệ thông tin": "microchip",
+      "An ninh mạng": "shield-halved",
+      "Phần mềm": "code",
+      "Trí tuệ nhân tạo": "robot",
+      "Dữ liệu": "database",
+
+      "Tôn giáo": "place-of-worship",
+      "Tâm linh": "spa",
+      "Huyền bí": "hat-wizard",
+      "Phong thủy": "yin-yang",
+      Thiền: "om",
+      Yoga: "person-praying",
+
+      "Thiếu nhi": "child",
+      "Tuổi teen": "child-reaching",
+      "Phụ nữ": "venus",
+      "Nam giới": "mars",
+      "Người cao tuổi": "person-cane",
+
+      "Bách khoa": "book-atlas",
+      "Từ điển": "book-open-reader",
+      "Sách nói": "headphones",
+      "Sách điện tử": "tablet-screen-button",
     };
 
-    // Get icon or use default
     const icon = iconMap[category.name] || "book";
 
     categoryEl.innerHTML = `
@@ -1138,9 +1156,7 @@ function renderCategories(categories, container) {
       }</span> cuốn sách</p>
     `;
 
-    // Add click event
     categoryEl.addEventListener("click", () => {
-      // Determine the correct path
       const pagesPath = window.location.pathname.includes("/pages/")
         ? ""
         : "pages/";
@@ -1151,9 +1167,6 @@ function renderCategories(categories, container) {
   });
 }
 
-/**
- * Render books
- */
 function renderBooks(books, container) {
   if (!container) return;
 
@@ -1169,21 +1182,17 @@ function renderBooks(books, container) {
   }
 
   books.forEach((book, index) => {
-    // Process cover path
     let coverPath = imageUtils
       ? imageUtils.processImagePath(book.coverPath)
       : book.coverPath || "/api/placeholder/220/250";
 
-    // Create book card
     const bookCard = document.createElement("div");
     bookCard.className = "book-card animate-item";
     bookCard.setAttribute("data-index", index);
 
-    // Check if book is new (less than 7 days old)
     const isNew =
       new Date(book.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
-    // Add featured/new badge if applicable
     let badgeHTML = "";
     if (book.featured) {
       badgeHTML = `<div class="book-badge featured">Nổi bật</div>`;
@@ -1214,9 +1223,7 @@ function renderBooks(books, container) {
       </div>
     `;
 
-    // Add click event to navigate to book detail
     bookCard.addEventListener("click", () => {
-      // Determine the correct path
       const pagesPath = window.location.pathname.includes("/pages/")
         ? ""
         : "pages/";
@@ -1227,9 +1234,6 @@ function renderBooks(books, container) {
   });
 }
 
-/**
- * Load book detail
- */
 async function loadBookDetail(bookId) {
   try {
     const book = await apiService.books.getById(bookId);
@@ -1238,32 +1242,28 @@ async function loadBookDetail(bookId) {
       throw new Error("Không tìm thấy dữ liệu sách");
     }
 
-    // Cập nhật tiêu đề trang
     document.title = `${book.title} - EBook Haven`;
 
-    // Tìm container thông tin sách
     const bookInfoContainer = document.getElementById("book-info");
     if (bookInfoContainer) {
       renderBookDetail(book, bookInfoContainer);
     }
 
-    // Tải bình luận
     loadBookComments(bookId);
 
-    // Tải sách liên quan
+
     if (book.categoryId) {
       loadRelatedBooks(book.categoryId, book.id);
     }
 
-    // Cập nhật hiển thị phần đánh giá
     updateRatingSectionVisibility();
 
-    // Hoàn thành tải
+
     completeLoading();
   } catch (error) {
     console.error("Lỗi khi tải chi tiết sách:", error);
 
-    // Hiển thị thông báo lỗi
+    
     const bookInfoContainer = document.getElementById("book-info");
     if (bookInfoContainer) {
       bookInfoContainer.innerHTML = `
@@ -1281,9 +1281,9 @@ async function loadBookDetail(bookId) {
   }
 }
 
-// Thêm sự kiện onload để đảm bảo DOM đã sẵn sàng
+
 window.addEventListener("load", function () {
-  // Kiểm tra lại nếu đang ở trang chủ
+
   if (document.getElementById("home-page")) {
     console.log("DOM đã load hoàn tất, kiểm tra lại việc tải trang chủ...");
 

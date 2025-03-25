@@ -1,4 +1,3 @@
-// backend/utils/logger.js
 const logger = {
   info: function (message) {
     console.log(`[INFO] ${message}`);

@@ -12,9 +12,152 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <style>
+      .category-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 12px;
+        margin-top: 20px;
+      }
+
+      .category-item {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 12px;
+        text-align: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 90px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .category-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .category-item:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--primary, #4361ee);
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .category-item:hover:before {
+        opacity: 1;
+      }
+
+      .category-icon {
+        font-size: 22px;
+        margin-bottom: 8px;
+        color: var(--primary, #4361ee);
+      }
+
+      .category-name {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0;
+        line-height: 1.2;
+      }
+
+      .category-count {
+        font-size: 12px;
+        color: var(--gray, #6c757d);
+        margin-top: 5px;
+      }
+
+      @media (max-width: 1200px) {
+        .category-grid {
+          grid-template-columns: repeat(5, 1fr);
+        }
+      }
+
+      @media (max-width: 992px) {
+        .category-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .category-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      @media (max-width: 576px) {
+        .category-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .category-item {
+          padding: 10px;
+          min-height: 80px;
+        }
+
+        .category-icon {
+          font-size: 20px;
+        }
+      }
+
+      .hero {
+        background-image: url("assets/images/library-background.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+        padding: 80px 0;
+        color: #fff;
+        border-radius: 0;
+        overflow: hidden;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.65);
+        z-index: 1;
+        border-radius: 0;
+      }
+
+      .hero .container {
+        position: relative;
+        z-index: 2;
+      }
+
+      .hero h1,
+      .hero p {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .hero .btn-outline {
+        color: white !important;
+        border: 2px solid white;
+        background-color: rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .hero .btn-outline:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        color: white !important;
+      }
+    </style>
   </head>
   <body>
-    <!-- Header -->
     <header>
       <div class="container header-container">
         <a href="index.html" class="logo">Ebook<span>Haven</span></a>
@@ -59,16 +202,12 @@
       </div>
     </header>
 
-    <!-- Home Page Content -->
     <div id="home-page">
-      <!-- Hero Section -->
       <section class="hero">
         <div class="container">
-          <h1 class="animate-fadeIn">Khám phá thế giới sách điện tử</h1>
+          <h1 class="animate-fadeIn">Chào Mừng Bạn Đến Với Ebook Haven</h1>
           <p class="animate-fadeIn">
-            Hàng ngàn sách hay miễn phí cho mọi người đam mê kiến thức và giải
-            trí. Tham gia ngay để tìm kiếm, tải về và chia sẻ những cuốn sách
-            tuyệt vời.
+            Hàng ngàn sách hay miễn phí đang chờ bạn đọc!
           </p>
           <a
             href="pages/categories.html"
@@ -79,11 +218,9 @@
         </div>
       </section>
 
-      <!-- Categories Section -->
       <section class="categories container animate-slideUp">
         <h2 class="section-title">Danh mục sách</h2>
         <div class="category-grid">
-          <!-- Danh mục sẽ được tải động bằng JavaScript -->
           <div
             class="loading-container"
             style="grid-column: 1/-1; text-align: center; padding: 50px"
@@ -96,11 +233,9 @@
         </div>
       </section>
 
-      <!-- Featured Books Section -->
       <section class="featured-books container animate-slideUp">
         <h2 class="section-title">Sách nổi bật</h2>
         <div class="book-grid">
-          <!-- Sách nổi bật sẽ được tải động bằng JavaScript -->
           <div
             class="loading-container"
             style="grid-column: 1/-1; text-align: center; padding: 50px"
@@ -113,11 +248,9 @@
         </div>
       </section>
 
-      <!-- New Arrivals Section -->
       <section class="new-arrivals container animate-slideUp">
         <h2 class="section-title">Sách mới</h2>
         <div class="book-grid">
-          <!-- Sách mới sẽ được tải động bằng JavaScript -->
           <div
             class="loading-container"
             style="grid-column: 1/-1; text-align: center; padding: 50px"
@@ -130,7 +263,6 @@
         </div>
       </section>
 
-      <!-- How It Works Section -->
       <section class="how-it-works animate-slideUp">
         <div class="container">
           <h2 class="section-title" style="text-align: center; display: block">
@@ -166,7 +298,6 @@
       </section>
     </div>
 
-    <!-- Footer -->
     <footer>
       <div class="container footer-container">
         <div class="footer-col">
@@ -212,13 +343,11 @@
         </div>
       </div>
     </footer>
-
-    <!-- Scripts -->
-    <script src="../assets/js/notification.js"></script>
-    <script src="../assets/js/auth.service.js"></script>
-    <script src="../assets/js/image-utils.js"></script>
-    <script src="../assets/js/api.service.js"></script>
-    <script src="../assets/js/main.js"></script>
+    <script src="assets/js/notification.js"></script>
+    <script src="assets/js/auth.service.js"></script>
+    <script src="assets/js/image-utils.js"></script>
+    <script src="assets/js/api.service.js"></script>
+    <script src="assets/js/main.js"></script>
     <div id="notification-container"></div>
   </body>
 </html>

@@ -8,13 +8,11 @@
     <link rel="stylesheet" href="../assets/css/normalize.css" />
     <link rel="stylesheet" href="../assets/css/main.css" />
     <link rel="stylesheet" href="../assets/css/responsive.css" />
-    <!-- Thêm vào <head> của tất cả trang -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <style>
-      /* CSS cho trang cá nhân */
       .profile-container {
         padding: 40px 0;
       }
@@ -151,8 +149,6 @@
     </style>
   </head>
   <body>
-    <!-- Header -->
-    <!-- Header cho tất cả các trang -->
     <header>
       <div class="container header-container">
         <a href="../index.html" class="logo">Ebook<span>Haven</span></a>
@@ -196,11 +192,9 @@
         </ul>
       </div>
     </header>
-    <!-- Profile Page -->
     <div class="container profile-container">
       <div class="profile-header">
         <div class="profile-avatar" id="profile-avatar">
-          <!-- Avatar sẽ được thêm bằng JavaScript -->
         </div>
         <div class="profile-info">
           <h1 id="profile-name">Đang tải...</h1>
@@ -220,11 +214,9 @@
       </div>
 
       <div class="profile-content">
-        <!-- Sách của tôi -->
         <div class="profile-section active" id="my-books-section">
           <h2>Sách đã chia sẻ</h2>
           <div class="book-grid" id="my-books-grid">
-            <!-- Books will be loaded by JavaScript -->
           </div>
           <div
             class="book-list-empty"
@@ -239,11 +231,9 @@
           </div>
         </div>
 
-        <!-- Sách yêu thích -->
         <div class="profile-section" id="favorites-section">
           <h2>Sách yêu thích</h2>
           <div class="book-grid" id="favorites-grid">
-            <!-- Books will be loaded by JavaScript -->
           </div>
           <div
             class="book-list-empty"
@@ -256,11 +246,10 @@
           </div>
         </div>
 
-        <!-- Lịch sử tải xuống -->
         <div class="profile-section" id="downloads-section">
           <h2>Lịch sử tải xuống</h2>
           <div class="book-grid" id="downloads-grid">
-            <!-- Books will be loaded by JavaScript -->
+  
           </div>
           <div
             class="book-list-empty"
@@ -273,7 +262,6 @@
           </div>
         </div>
 
-        <!-- Chỉnh sửa hồ sơ -->
         <div class="profile-section" id="edit-profile-section">
           <h2>Chỉnh sửa hồ sơ</h2>
           <form class="edit-profile-form" id="edit-profile-form">
@@ -321,7 +309,6 @@
       </div>
     </div>
 
-    <!-- Footer -->
     <footer>
       <div class="container footer-container">
         <div class="footer-col">
@@ -329,7 +316,7 @@
           <p>
             Thư viện sách điện tử cho mọi người yêu thích đọc sách và học hỏi.
           </p>
-          <!-- Thay thế trong tất cả trang -->
+
           <div class="social-icons">
             <a href="#"><i class="fab fa-facebook-f"></i></a>
             <a href="#"><i class="fab fa-twitter"></i></a>
@@ -369,24 +356,19 @@
       </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="../assets/js/api.service.js"></script>
     <script src="../assets/js/main.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", async function () {
-        // Kiểm tra đăng nhập
         if (!apiService.auth.isAuthenticated()) {
-          // Nếu chưa đăng nhập, chuyển về trang đăng nhập
           showAuthModal("login");
 
           alert("Bạn cần đăng nhập để xem trang cá nhân!");
           return;
         }
 
-        // Lấy thông tin người dùng
         const user = apiService.auth.getCurrentUser();
 
-        // Hiển thị thông tin người dùng
         document.getElementById("profile-name").textContent =
           user.displayName || user.username;
         document.getElementById("profile-avatar").textContent = user.username
@@ -398,7 +380,7 @@
           user.createdAt
         ).toLocaleDateString()}`;
 
-        // Hiển thị bio từ localStorage nếu có
+  
         if (user.bio) {
           document.getElementById("profile-bio").textContent = user.bio;
           document.getElementById("profile-bio").style.display = "block";
@@ -406,24 +388,20 @@
           document.getElementById("profile-bio").style.display = "none";
         }
 
-        // Lấy thông tin chi tiết từ API
         try {
           const userDetails = await apiService.users.getProfile();
           console.log("Thông tin chi tiết người dùng:", userDetails);
 
-          // Cập nhật giao diện với thông tin chi tiết
           document.getElementById(
             "profile-uploads"
           ).textContent = `Sách đã chia sẻ: ${userDetails.uploadCount || 0}`;
 
-          // Cập nhật hoặc hiển thị bio từ API nếu có
           if (userDetails.bio) {
             document.getElementById("profile-bio").textContent =
               userDetails.bio;
             document.getElementById("profile-bio").style.display = "block";
           }
 
-          // Điền thông tin vào form chỉnh sửa
           document.getElementById("display-name").value =
             userDetails.displayName || user.displayName || user.username;
           document.getElementById("email").value =
@@ -431,7 +409,6 @@
           document.getElementById("bio").value =
             userDetails.bio || user.bio || "";
 
-          // Tải và hiển thị dữ liệu
           await loadMyBooks();
           await loadFavoriteBooks();
           await loadDownloadHistory();
@@ -439,36 +416,30 @@
           console.error("Error loading user details:", error);
         }
 
-        // Xử lý chuyển tab
         const tabs = document.querySelectorAll(".profile-tab");
         tabs.forEach((tab) => {
           tab.addEventListener("click", function () {
-            // Xóa active class từ tất cả tab
             tabs.forEach((t) => {
               t.classList.remove("active");
             });
 
-            // Thêm active class cho tab được click
             this.classList.add("active");
 
-            // Ẩn tất cả section
             document.querySelectorAll(".profile-section").forEach((section) => {
               section.classList.remove("active");
             });
 
-            // Hiện section tương ứng
             const tabId = this.dataset.tab;
             document.getElementById(`${tabId}-section`).classList.add("active");
           });
         });
 
-        // Xử lý form chỉnh sửa hồ sơ
+
         document
           .getElementById("edit-profile-form")
           .addEventListener("submit", async function (e) {
             e.preventDefault();
 
-            // Lấy dữ liệu form
             const displayName = document.getElementById("display-name").value;
             const bio = document.getElementById("bio").value;
             const currentPassword =
@@ -477,7 +448,6 @@
             const confirmPassword =
               document.getElementById("confirm-password").value;
 
-            // Kiểm tra mật khẩu mới
             if (newPassword && newPassword !== confirmPassword) {
               alert("Mật khẩu xác nhận không khớp!");
               return;
@@ -486,7 +456,6 @@
             try {
               console.log("Gửi dữ liệu cập nhật:", { displayName, bio });
 
-              // Gọi API cập nhật
               const response = await apiService.users.updateProfile({
                 displayName,
                 bio,
@@ -500,7 +469,6 @@
               ) {
                 alert("Cập nhật hồ sơ thành công!");
 
-                // Cập nhật thông tin user trong localStorage
                 const user = apiService.auth.getCurrentUser();
                 const updatedUser = {
                   ...user,
@@ -513,7 +481,6 @@
 
                 apiService.auth.setUser(updatedUser);
 
-                // Cập nhật hiển thị ngay lập tức
                 document.getElementById("profile-name").textContent =
                   displayName || user.username;
                 document.getElementById("profile-bio").textContent = bio;
@@ -521,7 +488,6 @@
                   ? "block"
                   : "none";
 
-                // Reload trang để cập nhật đầy đủ UI
                 window.location.reload();
               } else {
                 alert(response.message || "Cập nhật thất bại!");
@@ -533,7 +499,6 @@
           });
       });
 
-      // Tải sách của tôi
       async function loadMyBooks() {
         try {
           console.log("Loading my books...");
@@ -554,7 +519,6 @@
         }
       }
 
-      // Hiển thị sách của tôi
       function renderMyBooks(books) {
         const container = document.getElementById("my-books-grid");
         container.innerHTML = "";
@@ -563,7 +527,6 @@
           const bookCard = document.createElement("div");
           bookCard.className = "book-card";
 
-          // Xử lý đường dẫn ảnh bìa
           let coverPath = "/api/placeholder/220/250";
           if (book.coverPath) {
             if (!book.coverPath.startsWith("/")) {
@@ -573,7 +536,6 @@
             }
           }
 
-          // Tạo HTML cho thẻ sách
           bookCard.innerHTML = `
             <div class="book-cover">
               <img src="${coverPath}" alt="${book.title}" 
@@ -597,7 +559,6 @@
         });
       }
 
-      // Tải sách yêu thích
       async function loadFavoriteBooks() {
         try {
           console.log("Loading favorite books...");
@@ -618,7 +579,6 @@
         }
       }
 
-      // Hiển thị sách yêu thích
       function renderFavoriteBooks(books) {
         const container = document.getElementById("favorites-grid");
         container.innerHTML = "";
@@ -627,7 +587,6 @@
           const bookCard = document.createElement("div");
           bookCard.className = "book-card";
 
-          // Xử lý đường dẫn ảnh bìa
           let coverPath = "/api/placeholder/220/250";
           if (book.coverPath) {
             if (!book.coverPath.startsWith("/")) {
@@ -637,7 +596,6 @@
             }
           }
 
-          // Tạo HTML cho thẻ sách
           bookCard.innerHTML = `
             <div class="book-cover">
               <img src="${coverPath}" alt="${book.title}" 
@@ -663,10 +621,9 @@
           container.appendChild(bookCard);
         });
 
-        // Thêm sự kiện cho nút xóa
         document.querySelectorAll(".remove-favorite").forEach((button) => {
           button.addEventListener("click", async function (e) {
-            e.stopPropagation(); // Ngăn không cho click vào thẻ book-card
+            e.stopPropagation(); 
             const bookId = this.getAttribute("data-id");
 
             try {
@@ -677,7 +634,6 @@
                 alert(
                   response.message || "Đã xóa sách khỏi danh sách yêu thích!"
                 );
-                // Tải lại danh sách
                 await loadFavoriteBooks();
               }
             } catch (error) {
@@ -688,7 +644,6 @@
         });
       }
 
-      // Tải lịch sử tải xuống
       async function loadDownloadHistory() {
         try {
           console.log("Loading download history...");
@@ -709,7 +664,6 @@
         }
       }
 
-      // Hiển thị lịch sử tải xuống
       function renderDownloadHistory(books) {
         const container = document.getElementById("downloads-grid");
         container.innerHTML = "";
@@ -718,7 +672,6 @@
           const bookCard = document.createElement("div");
           bookCard.className = "book-card";
 
-          // Xử lý đường dẫn ảnh bìa
           let coverPath = "/api/placeholder/220/250";
           if (book.coverPath) {
             if (!book.coverPath.startsWith("/")) {
@@ -728,10 +681,8 @@
             }
           }
 
-          // Format ngày tải
           const downloadDate = new Date(book.downloadedAt).toLocaleDateString();
 
-          // Tạo HTML cho thẻ sách
           bookCard.innerHTML = `
             <div class="book-cover">
               <img src="${coverPath}" alt="${book.title}" 
@@ -758,7 +709,6 @@
           container.appendChild(bookCard);
         });
 
-        // Thêm sự kiện cho nút tải lại
         document.querySelectorAll(".download-again").forEach((button) => {
           button.addEventListener("click", function (e) {
             e.stopPropagation();

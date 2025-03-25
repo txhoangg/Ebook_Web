@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../../assets/css/normalize.css" />
     <link rel="stylesheet" href="../../assets/css/main.css" />
     <link rel="stylesheet" href="../../assets/css/responsive.css" />
-    <!-- Thêm vào <head> của tất cả trang -->
+
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -15,7 +15,7 @@
     <style>
       .admin-container {
         display: flex;
-        min-height: calc(100vh - 70px - 400px); /* Trừ header và footer */
+        min-height: calc(100vh - 70px - 400px);
       }
 
       .admin-sidebar {
@@ -303,8 +303,6 @@
     </style>
   </head>
   <body>
-    <!-- Header -->
-    <!-- Header cho tất cả các trang -->
     <header>
       <div class="container header-container">
         <a href="../../index.html" class="logo">Ebook<span>Haven</span></a>
@@ -349,7 +347,6 @@
       </div>
     </header>
 
-    <!-- Admin Categories Page -->
     <div class="admin-container">
       <div class="admin-sidebar">
         <div class="admin-sidebar-header">
@@ -406,7 +403,6 @@
               </tr>
             </thead>
             <tbody id="categories-table">
-              <!-- Categories will be loaded by JavaScript -->
               <tr>
                 <td colspan="6">Đang tải dữ liệu...</td>
               </tr>
@@ -416,7 +412,6 @@
       </div>
     </div>
 
-    <!-- Category Modal -->
     <div class="category-modal" id="category-modal">
       <div class="category-modal-content">
         <div class="category-modal-header">
@@ -439,13 +434,10 @@
             </button>
           </div>
         </div>
-        <div id="category-details-container" style="display: none">
-          <!-- Category details will be loaded by JavaScript -->
-        </div>
+        <div id="category-details-container" style="display: none"></div>
       </div>
     </div>
 
-    <!-- Footer -->
     <footer>
       <div class="container footer-container">
         <div class="footer-col">
@@ -453,7 +445,7 @@
           <p>
             Thư viện sách điện tử cho mọi người yêu thích đọc sách và học hỏi.
           </p>
-          <!-- Thay thế trong tất cả trang -->
+
           <div class="social-icons">
             <a href="#"><i class="fab fa-facebook-f"></i></a>
             <a href="#"><i class="fab fa-twitter"></i></a>
@@ -493,7 +485,6 @@
       </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="../../assets/js/api.service.js"></script>
     <script src="../../assets/js/main.js"></script>
     <script>
@@ -501,7 +492,6 @@
       let isEditing = false;
 
       document.addEventListener("DOMContentLoaded", async function () {
-        // Kiểm tra đăng nhập và quyền admin
         if (!apiService.auth.isAuthenticated()) {
           alert("Bạn cần đăng nhập để truy cập trang quản trị!");
           window.location.href = "../../index.html";
@@ -515,10 +505,8 @@
           return;
         }
 
-        // Tải danh sách danh mục
         loadCategories();
 
-        // Xử lý tìm kiếm
         document
           .getElementById("search-btn")
           .addEventListener("click", function () {
@@ -533,14 +521,12 @@
             }
           });
 
-        // Thêm danh mục mới
         document
           .getElementById("add-category-btn")
           .addEventListener("click", function () {
             showAddCategoryModal();
           });
 
-        // Xử lý đóng modal
         document
           .querySelector(".category-modal-close")
           .addEventListener("click", closeModal);
@@ -548,13 +534,11 @@
           .getElementById("cancel-category-btn")
           .addEventListener("click", closeModal);
 
-        // Xử lý lưu danh mục
         document
           .getElementById("save-category-btn")
           .addEventListener("click", saveCategory);
       });
 
-      // Tải danh sách danh mục
       async function loadCategories(searchTerm = "") {
         try {
           const categories = await apiService.categories.getAll();
@@ -564,7 +548,6 @@
             return;
           }
 
-          // Lọc danh mục theo từ khóa tìm kiếm
           let filteredCategories = categories;
           if (searchTerm) {
             filteredCategories = categories.filter(
@@ -579,7 +562,6 @@
             );
           }
 
-          // Hiển thị danh mục
           renderCategories(filteredCategories);
         } catch (error) {
           console.error("Error loading categories:", error);
@@ -587,7 +569,6 @@
         }
       }
 
-      // Hiển thị danh sách danh mục
       function renderCategories(categories) {
         const tableBody = document.getElementById("categories-table");
 
@@ -626,7 +607,6 @@
           tableBody.appendChild(row);
         });
 
-        // Thêm sự kiện cho các nút
         document.querySelectorAll(".view-btn").forEach((btn) => {
           btn.addEventListener("click", function () {
             const categoryId = this.getAttribute("data-id");
@@ -649,7 +629,6 @@
         });
       }
 
-      // Xem chi tiết danh mục
       async function viewCategory(categoryId) {
         try {
           const category = await apiService.categories.getById(categoryId);
@@ -659,7 +638,6 @@
             return;
           }
 
-          // Hiển thị modal xem chi tiết
           document.getElementById("category-form-container").style.display =
             "none";
           const categoryDetails = document.getElementById(
@@ -706,7 +684,6 @@
             </div>
           `;
 
-          // Hiển thị modal
           document.getElementById("modal-title").textContent =
             "Chi tiết danh mục";
           document.getElementById("category-modal").classList.add("active");
@@ -716,7 +693,6 @@
         }
       }
 
-      // Hiển thị modal thêm danh mục
       function showAddCategoryModal() {
         isEditing = false;
         currentCategory = null;
@@ -734,7 +710,6 @@
         document.getElementById("category-modal").classList.add("active");
       }
 
-      // Chỉnh sửa danh mục
       async function editCategory(categoryId) {
         try {
           const category = await apiService.categories.getById(categoryId);
@@ -765,7 +740,6 @@
         }
       }
 
-      // Lưu danh mục (thêm mới hoặc cập nhật)
       async function saveCategory() {
         const name = document.getElementById("category-name").value.trim();
         const description = document
@@ -779,7 +753,6 @@
 
         try {
           if (isEditing && currentCategory) {
-            // Cập nhật danh mục hiện có
             await apiService.categories.update(currentCategory.id, {
               name,
               description,
@@ -787,7 +760,6 @@
 
             alert("Cập nhật danh mục thành công!");
           } else {
-            // Tạo danh mục mới
             await apiService.categories.create({
               name,
               description,
@@ -797,14 +769,13 @@
           }
 
           closeModal();
-          loadCategories(); // Tải lại danh sách danh mục
+          loadCategories();
         } catch (error) {
           console.error("Error saving category:", error);
           alert("Lỗi khi lưu danh mục!");
         }
       }
 
-      // Xóa danh mục
       async function deleteCategory(categoryId) {
         try {
           const category = await apiService.categories.getById(categoryId);
@@ -814,7 +785,6 @@
             return;
           }
 
-          // Kiểm tra xem danh mục có sách không
           if (category.books && category.books.length > 0) {
             alert(
               `Không thể xóa danh mục có ${category.books.length} sách! Vui lòng chuyển sách sang danh mục khác trước.`
@@ -830,21 +800,19 @@
 
           await apiService.categories.delete(categoryId);
           alert("Xóa danh mục thành công!");
-          loadCategories(); // Tải lại danh sách danh mục
+          loadCategories();
         } catch (error) {
           console.error("Error deleting category:", error);
           alert("Lỗi khi xóa danh mục!");
         }
       }
 
-      // Đóng modal
       function closeModal() {
         document.getElementById("category-modal").classList.remove("active");
         isEditing = false;
         currentCategory = null;
       }
 
-      // Hiển thị lỗi
       function showError(message) {
         const tableBody = document.getElementById("categories-table");
         tableBody.innerHTML = `<tr><td colspan="6">${message}</td></tr>`;

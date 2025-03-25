@@ -150,8 +150,6 @@
     </style>
   </head>
   <body>
-    <!-- Header -->
-    <!-- Header cho tất cả các trang -->
     <header>
       <div class="container header-container">
         <a href="../index.html" class="logo">Ebook<span>Haven</span></a>
@@ -196,10 +194,10 @@
       </div>
     </header>
 
-    <!-- Book Detail Page -->
+  
     <div class="container book-detail">
       <div class="book-detail-container" id="book-info">
-        <!-- Book details will be loaded by JavaScript -->
+ 
         <div
           class="loading-container"
           style="width: 100%; text-align: center; padding: 50px"
@@ -211,7 +209,7 @@
         </div>
       </div>
 
-      <!-- Đánh giá sách -->
+
       <div
         class="book-rating-container"
         id="rating-section"
@@ -238,18 +236,16 @@
         </button>
       </div>
 
-      <!-- Nhận xét của người dùng -->
+
       <div class="comments-section" id="comments-section" style="display: none">
         <h3><i class="fas fa-comments"></i> Nhận xét từ độc giả</h3>
         <div id="comments-container">
-          <!-- Comments will be loaded by JavaScript -->
         </div>
       </div>
 
       <section class="related-books">
         <h2 class="section-title">Sách liên quan</h2>
         <div class="book-grid" id="related-books">
-          <!-- Related books will be loaded by JavaScript -->
           <div
             class="loading-container"
             style="grid-column: 1/-1; text-align: center; padding: 50px"
@@ -263,7 +259,6 @@
       </section>
     </div>
 
-    <!-- Footer -->
     <footer>
       <div class="container footer-container">
         <div class="footer-col">
@@ -310,10 +305,8 @@
       </div>
     </footer>
 
-    <!-- Notification Container -->
     <div id="notification-container"></div>
 
-    <!-- Scripts -->
     <script src="../assets/js/notification.js"></script>
     <script src="../assets/js/auth.service.js"></script>
     <script src="../assets/js/image-utils.js"></script>
@@ -324,18 +317,15 @@
       let currentRating = 0;
 
       document.addEventListener("DOMContentLoaded", async function () {
-        // Lấy ID sách từ URL
         const urlParams = new URLSearchParams(window.location.search);
         const bookId = urlParams.get("id");
 
         if (!bookId) {
-          // Nếu không có ID, chuyển về trang chủ
           window.location.href = "../index.html";
           return;
         }
 
         try {
-          // Lấy thông tin sách
           const book = await apiService.books.getById(bookId);
           console.log("Book data:", book);
           currentBook = book;
@@ -344,22 +334,22 @@
             throw new Error("Không tìm thấy dữ liệu sách");
           }
 
-          // Cập nhật tiêu đề trang
+
           document.title = `${book.title} - EBook Haven`;
 
-          // Hiển thị thông tin sách
+
           renderBookDetail(book);
 
-          // Lấy nhận xét
+  
           loadComments(bookId);
 
-          // Lấy sách liên quan (cùng danh mục)
+
           if (book.categoryId) {
             const relatedBooks = await apiService.categories.getBooks(
               book.categoryId
             );
 
-            // Lọc bỏ sách hiện tại và chỉ lấy tối đa 4 sách
+
             const filteredBooks = relatedBooks
               .filter((relatedBook) => relatedBook.id !== book.id)
               .slice(0, 4);
@@ -376,7 +366,7 @@
             document.querySelector(".related-books").style.display = "none";
           }
 
-          // Hiển thị phần đánh giá nếu người dùng đã đăng nhập
+
           if (apiService.auth.isAuthenticated()) {
             document.getElementById("rating-section").style.display = "block";
             setupRatingStars();
@@ -393,7 +383,7 @@
         }
       });
 
-      // Thiết lập đánh giá sao
+
       function setupRatingStars() {
         const stars = document.querySelectorAll("#star-rating i");
 
@@ -413,7 +403,7 @@
           });
         });
 
-        // Nút gửi đánh giá
+
         document
           .getElementById("submit-rating")
           .addEventListener("click", async function () {
@@ -432,7 +422,7 @@
 
               notifications.success("Đã gửi đánh giá thành công!");
 
-              // Tải lại trang sau 1 giây
+
               setTimeout(() => {
                 window.location.reload();
               }, 1000);
@@ -443,7 +433,7 @@
           });
       }
 
-      // Tô màu sao
+
       function highlightStars(rating) {
         const stars = document.querySelectorAll("#star-rating i");
 
@@ -458,7 +448,7 @@
         });
       }
 
-      // Tải nhận xét
+
       async function loadComments(bookId) {
         try {
           const comments = await apiService.books.getComments(bookId);
@@ -472,13 +462,13 @@
         }
       }
 
-      // Hiển thị danh sách nhận xét
+
       function renderComments(comments) {
         const container = document.getElementById("comments-container");
         container.innerHTML = "";
 
         comments.forEach((comment) => {
-          // Định dạng ngày
+   
           const date = new Date(comment.createdAt);
           const formattedDate = date.toLocaleDateString("vi-VN", {
             year: "numeric",
@@ -486,7 +476,7 @@
             day: "numeric",
           });
 
-          // Tạo sao đánh giá
+
           let stars = "";
           for (let i = 1; i <= 5; i++) {
             if (i <= comment.rating) {
@@ -513,7 +503,7 @@
         });
       }
 
-      // Kiểm tra trạng thái yêu thích
+
       async function checkFavoriteStatus(bookId) {
         if (!apiService.auth.isAuthenticated()) return false;
 
@@ -526,7 +516,7 @@
         }
       }
 
-      // Hiển thị nút yêu thích dựa vào trạng thái
+
       async function renderFavoriteButton(bookId) {
         const favoriteBtn = document.getElementById("favorite-btn");
         const isFavorite = await checkFavoriteStatus(bookId);
@@ -544,7 +534,7 @@
         }
       }
 
-      // Thêm vào yêu thích
+
       async function addFavorite(bookId) {
         if (!apiService.auth.isAuthenticated()) {
           showAuthModal("login");
@@ -574,7 +564,7 @@
         }
       }
 
-      // Xóa khỏi yêu thích
+
       async function removeFavorite(bookId) {
         if (!apiService.auth.isAuthenticated()) {
           showAuthModal("login");
@@ -604,14 +594,14 @@
         }
       }
 
-      // Hiển thị chi tiết sách
+
       async function renderBookDetail(book) {
         const bookInfo = document.getElementById("book-info");
 
-        // Xử lý đường dẫn ảnh
+   
         const coverPath = imageUtils.processImagePath(book.coverPath);
 
-        // Kiểm tra sách mới (1 tuần)
+
         const isNew =
           new Date(book.createdAt) >
           new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
@@ -708,18 +698,17 @@
           </div>
         `;
 
-        // Xử lý nút tải xuống
         document
           .getElementById("download-btn")
           .addEventListener("click", function () {
             downloadBook(book.id);
           });
 
-        // Cập nhật nút yêu thích dựa trên trạng thái
+
         await renderFavoriteButton(book.id);
       }
 
-      // Tải xuống sách
+
       function downloadBook(bookId) {
         apiService.books.download(bookId);
         notifications.success("Đang tải xuống sách...");

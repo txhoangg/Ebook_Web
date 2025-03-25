@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="../../assets/css/normalize.css" />
     <link rel="stylesheet" href="../../assets/css/main.css" />
     <link rel="stylesheet" href="../../assets/css/responsive.css" />
-    <!-- Thêm vào <head> của tất cả trang -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -170,6 +169,49 @@
         background-color: #f8f9fa;
       }
 
+      .error-message {
+        background-color: rgba(239, 71, 111, 0.1);
+        color: var(--danger);
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: none;
+      }
+
+      .error-message.show {
+        display: block;
+      }
+
+      #debug-info {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        max-width: 400px;
+        max-height: 300px;
+        overflow: auto;
+        z-index: 9999;
+        font-size: 12px;
+        font-family: monospace;
+        display: none;
+      }
+
+      .debug-toggle {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        background-color: var(--dark);
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        z-index: 10000;
+      }
+
       @media (max-width: 768px) {
         .admin-container {
           flex-direction: column;
@@ -195,8 +237,6 @@
     </style>
   </head>
   <body>
-    <!-- Header -->
-    <!-- Header cho tất cả các trang -->
     <header>
       <div class="container header-container">
         <a href="../../index.html" class="logo">Ebook<span>Haven</span></a>
@@ -241,7 +281,11 @@
       </div>
     </header>
 
-    <!-- Admin Dashboard -->
+    <div class="error-message" id="error-container">
+      <i class="fas fa-exclamation-circle"></i>
+      <span id="error-message">Đã xảy ra lỗi</span>
+    </div>
+
     <div class="admin-container">
       <div class="admin-sidebar">
         <div class="admin-sidebar-header">
@@ -358,7 +402,9 @@
       </div>
     </div>
 
-    <!-- Footer -->
+    <button class="debug-toggle" id="debug-toggle">Debug</button>
+    <div id="debug-info"></div>
+
     <footer>
       <div class="container footer-container">
         <div class="footer-col">
@@ -366,7 +412,7 @@
           <p>
             Thư viện sách điện tử cho mọi người yêu thích đọc sách và học hỏi.
           </p>
-          <!-- Thay thế trong tất cả trang -->
+
           <div class="social-icons">
             <a href="#"><i class="fab fa-facebook-f"></i></a>
             <a href="#"><i class="fab fa-twitter"></i></a>
@@ -406,26 +452,99 @@
       </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="../../assets/js/api.service.js"></script>
     <script src="../../assets/js/main.js"></script>
     <script>
+      function initAnimations() {
+        const animateItems = document.querySelectorAll(".animate-item");
+
+        if (animateItems.length > 0) {
+          animateItems.forEach((item, index) => {
+            item.style.opacity = "0";
+            item.style.transform = "translateY(20px)";
+            item.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+
+            setTimeout(() => {
+              item.style.opacity = "1";
+              item.style.transform = "translateY(0)";
+            }, 100 * index);
+          });
+        }
+      }
+
+      window.debugLog = function (message) {
+        const debugDiv = document.getElementById("debug-info");
+        if (debugDiv) {
+          const time = new Date().toLocaleTimeString();
+          debugDiv.innerHTML += `<div>[${time}] ${message}</div>`;
+          debugDiv.scrollTop = debugDiv.scrollHeight;
+        }
+      };
+
+      document
+        .getElementById("debug-toggle")
+        .addEventListener("click", function () {
+          const debugInfo = document.getElementById("debug-info");
+          if (debugInfo.style.display === "none" || !debugInfo.style.display) {
+            debugInfo.style.display = "block";
+          } else {
+            debugInfo.style.display = "none";
+          }
+        });
+
+      function showError(message) {
+        const errorContainer = document.getElementById("error-container");
+        const errorMessage = document.getElementById("error-message");
+
+        errorMessage.textContent = message;
+        errorContainer.classList.add("show");
+
+        debugLog(`ERROR: ${message}`);
+      }
+
+      function checkToken() {
+        const user = apiService.auth.getCurrentUser();
+        if (!user || !user.accessToken) {
+          return false;
+        }
+
+        return true;
+      }
+
       document.addEventListener("DOMContentLoaded", async function () {
-        // Kiểm tra đăng nhập và quyền admin
+        debugLog("Trang đã được tải, bắt đầu khởi tạo...");
+
         if (!apiService.auth.isAuthenticated()) {
-          alert("Bạn cần đăng nhập để truy cập trang quản trị!");
-          window.location.href = "../../index.html";
+          debugLog("Người dùng chưa đăng nhập");
+          showError("Bạn cần đăng nhập để truy cập trang quản trị!");
+          setTimeout(() => {
+            window.location.href = "../../index.html";
+          }, 2000);
           return;
         }
 
         const user = apiService.auth.getCurrentUser();
+        debugLog(`Người dùng: ${user.username}, Vai trò: ${user.role}`);
+
         if (user.role !== "admin") {
-          alert("Bạn không có quyền truy cập trang quản trị!");
-          window.location.href = "../../index.html";
+          debugLog("Người dùng không có quyền admin");
+          showError("Bạn không có quyền truy cập trang quản trị!");
+          setTimeout(() => {
+            window.location.href = "../../index.html";
+          }, 2000);
           return;
         }
 
-        // Hiển thị ngày hiện tại
+        if (!checkToken()) {
+          debugLog("Token không hợp lệ hoặc đã hết hạn");
+          showError("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!");
+          setTimeout(() => {
+            apiService.auth.logout();
+            window.location.href = "../../index.html";
+          }, 2000);
+          return;
+        }
+
         const now = new Date();
         document.getElementById("current-date").textContent =
           now.toLocaleDateString("vi-VN", {
@@ -435,22 +554,34 @@
             day: "numeric",
           });
 
-        // Tải dữ liệu tổng quan
-        try {
-          const stats = await apiService.admin.getStats();
+        debugLog("Ngày hiện tại đã được cập nhật");
 
-          // Cập nhật thẻ thống kê
+        try {
+          debugLog("Bắt đầu tải dữ liệu thống kê...");
+
+          const statsPromise = Promise.race([
+            apiService.admin.getStats(),
+            new Promise((_, reject) =>
+              setTimeout(
+                () => reject(new Error("Thời gian yêu cầu quá lâu")),
+                10000
+              )
+            ),
+          ]);
+
+          const stats = await statsPromise;
+          debugLog("Đã nhận được dữ liệu thống kê");
+
           document.getElementById("total-books").textContent =
             stats.totalBooks || 0;
           document.getElementById("total-users").textContent =
             stats.totalUsers || 0;
           document.getElementById("total-downloads").textContent =
             stats.totalDownloads || 0;
-          document.getElementById("avg-rating").textContent = (
+          document.getElementById("avg-rating").textContent = parseFloat(
             stats.avgRating || 0
           ).toFixed(1);
 
-          // Cập nhật % thay đổi
           document.getElementById("books-change").textContent = `${
             stats.booksGrowth > 0 ? "+" : ""
           }${stats.booksGrowth || 0}% so với tháng trước`;
@@ -464,8 +595,6 @@
             stats.ratingChange > 0 ? "+" : ""
           }${stats.ratingChange || 0} so với tháng trước`;
 
-          // Cập nhật màu
-          // Cập nhật màu
           if (stats.booksGrowth < 0) {
             document
               .getElementById("books-change")
@@ -496,21 +625,69 @@
             document.getElementById("rating-change").classList.add("negative");
           }
 
-          // Tải danh sách sách mới nhất
+          debugLog("Bắt đầu tải danh sách sách mới nhất...");
           const latestBooks = await apiService.admin.getLatestBooks();
+          debugLog(`Đã nhận được ${latestBooks.length} sách mới nhất`);
           renderLatestBooks(latestBooks);
 
-          // Tải danh sách người dùng mới nhất
+          debugLog("Bắt đầu tải danh sách người dùng mới nhất...");
           const latestUsers = await apiService.admin.getLatestUsers();
+          debugLog(`Đã nhận được ${latestUsers.length} người dùng mới nhất`);
           renderLatestUsers(latestUsers);
+
+          debugLog("Tất cả dữ liệu đã được tải thành công!");
+
+          if (typeof initAnimations === "function") {
+            initAnimations();
+          }
         } catch (error) {
           console.error("Error loading admin dashboard:", error);
-          alert("Lỗi khi tải dữ liệu!");
+          debugLog(`Lỗi: ${error.message}`);
+
+          if (error.message.includes("Authentication")) {
+            showError("Xác thực thất bại. Vui lòng đăng nhập lại!");
+            setTimeout(() => {
+              apiService.auth.logout();
+              window.location.href = "../../index.html";
+            }, 2000);
+          } else if (
+            error.message.includes("timeout") ||
+            error.message.includes("quá lâu")
+          ) {
+            showError(
+              "Không thể kết nối đến máy chủ. Vui lòng kiểm tra kết nối mạng và thử lại sau!"
+            );
+          } else {
+            showError("Lỗi khi tải dữ liệu! " + error.message);
+          }
+
+          renderEmptyData();
         }
       });
 
-      // Hiển thị danh sách sách mới nhất
+      function renderEmptyData() {
+        document.getElementById("total-books").textContent = "0";
+        document.getElementById("total-users").textContent = "0";
+        document.getElementById("total-downloads").textContent = "0";
+        document.getElementById("avg-rating").textContent = "0.0";
+
+        document.getElementById("books-change").textContent =
+          "0% so với tháng trước";
+        document.getElementById("users-change").textContent =
+          "0% so với tháng trước";
+        document.getElementById("downloads-change").textContent =
+          "0% so với tháng trước";
+        document.getElementById("rating-change").textContent =
+          "0 so với tháng trước";
+
+        document.getElementById("latest-books-table").innerHTML =
+          '<tr><td colspan="4">Không có dữ liệu</td></tr>';
+        document.getElementById("latest-users-table").innerHTML =
+          '<tr><td colspan="4">Không có dữ liệu</td></tr>';
+      }
+
       function renderLatestBooks(books) {
+        debugLog("Đang render danh sách sách mới nhất");
         const tableBody = document.getElementById("latest-books-table");
 
         if (!books || books.length === 0) {
@@ -530,17 +707,17 @@
                     <td>${book.title}</td>
                     <td>${book.author}</td>
                     <td>${dateCreated}</td>
-                    <td><span class="status ${book.status.toLowerCase()}">${
-            book.status
-          }</span></td>
+                    <td><span class="status ${
+                      book.status ? book.status.toLowerCase() : "pending"
+                    }">${book.status || "Pending"}</span></td>
                 `;
 
           tableBody.appendChild(row);
         });
       }
 
-      // Hiển thị danh sách người dùng mới nhất
       function renderLatestUsers(users) {
+        debugLog("Đang render danh sách người dùng mới nhất");
         const tableBody = document.getElementById("latest-users-table");
 
         if (!users || users.length === 0) {
@@ -560,7 +737,7 @@
                     <td>${user.username}</td>
                     <td>${user.email}</td>
                     <td>${dateCreated}</td>
-                    <td>${user.role}</td>
+                    <td>${user.role || "user"}</td>
                 `;
 
           tableBody.appendChild(row);

@@ -8,15 +8,12 @@
     <link rel="stylesheet" href="../assets/css/normalize.css" />
     <link rel="stylesheet" href="../assets/css/main.css" />
     <link rel="stylesheet" href="../assets/css/responsive.css" />
-    <!-- Thêm vào <head> của tất cả trang -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
   </head>
   <body>
-    <!-- Header -->
-    <!-- Header cho tất cả các trang -->
     <header>
       <div class="container header-container">
         <a href="../index.html" class="logo">Ebook<span>Haven</span></a>
@@ -61,7 +58,6 @@
       </div>
     </header>
 
-    <!-- Search Results Page -->
     <div class="container">
       <div class="search-header">
         <h1>Kết quả tìm kiếm: <span id="search-term"></span></h1>
@@ -86,9 +82,7 @@
         </div>
       </div>
 
-      <div class="search-results book-grid">
-        <!-- Book cards will be inserted here by JavaScript -->
-      </div>
+      <div class="search-results book-grid"></div>
 
       <div class="search-empty" style="display: none">
         <h2>Không tìm thấy kết quả phù hợp</h2>
@@ -96,7 +90,6 @@
       </div>
     </div>
 
-    <!-- Footer -->
     <footer>
       <div class="container footer-container">
         <div class="footer-col">
@@ -104,7 +97,6 @@
           <p>
             Thư viện sách điện tử cho mọi người yêu thích đọc sách và học hỏi.
           </p>
-          <!-- Thay thế trong tất cả trang -->
           <div class="social-icons">
             <a href="#"><i class="fab fa-facebook-f"></i></a>
             <a href="#"><i class="fab fa-twitter"></i></a>
@@ -144,22 +136,18 @@
       </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="../assets/js/api.service.js"></script>
     <script src="../assets/js/main.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", async function () {
-        // Lấy tham số tìm kiếm từ URL
         const urlParams = new URLSearchParams(window.location.search);
         const searchQuery = urlParams.get("q");
 
-        // Hiển thị từ khóa tìm kiếm
         if (searchQuery) {
           document.getElementById("search-term").textContent = searchQuery;
           document.getElementById("search-input").value = searchQuery;
         }
 
-        // Load danh mục cho bộ lọc
         try {
           const categories = await apiService.categories.getAll();
           const categoryFilter = document.getElementById("category-filter");
@@ -174,10 +162,8 @@
           console.error("Error loading categories:", error);
         }
 
-        // Thực hiện tìm kiếm
         performSearch();
 
-        // Xử lý sự kiện thay đổi bộ lọc
         document
           .getElementById("category-filter")
           .addEventListener("change", performSearch);
@@ -185,13 +171,11 @@
           .getElementById("sort-filter")
           .addEventListener("change", performSearch);
 
-        // Xử lý form tìm kiếm
         const searchBar = document.querySelector(".search-bar");
         searchBar.addEventListener("submit", function (e) {
           e.preventDefault();
           const query = document.getElementById("search-input").value.trim();
           if (query) {
-            // Cập nhật URL và thực hiện tìm kiếm mới
             const url = new URL(window.location);
             url.searchParams.set("q", query);
             window.history.pushState({}, "", url);
@@ -202,7 +186,6 @@
         });
       });
 
-      // Hàm thực hiện tìm kiếm
       async function performSearch() {
         const searchQuery = new URLSearchParams(window.location.search).get(
           "q"
@@ -227,12 +210,10 @@
         try {
           const results = await apiService.books.getAll(params);
 
-          // Cập nhật số lượng kết quả
           document.getElementById(
             "search-count"
           ).innerHTML = `Tìm thấy <span>${results.length}</span> kết quả`;
 
-          // Hiển thị kết quả
           const resultsContainer = document.querySelector(".search-results");
           const emptyMessage = document.querySelector(".search-empty");
 
