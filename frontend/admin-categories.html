@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <base href="/" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý danh mục - EBook Haven</title>
+    <link rel="stylesheet" href="/assets/css/normalize.css" />
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <link rel="stylesheet" href="/assets/css/responsive.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #4361ee;
+        --primary-dark: #3a56d4;
+        --secondary: #2ec4b6;
+        --secondary-dark: #21a99d;
+        --dark: #2b2d42;
+        --dark-light: #3d405b;
+        --light: #f8f9fa;
+        --light-gray: #e9ecef;
+        --gray: #6c757d;
+        --danger: #ef476f;
+        --warning: #ffd166;
+        --success: #06d6a0;
+        --accent: #ff9f1c;
+      }
+
+      body {
+        background-color: #f0f4f8;
+      }
+
+      .admin-container {
+        display: flex;
+        min-height: calc(100vh - 70px);
+      }
+
+      .admin-sidebar {
+        width: 260px;
+        background: linear-gradient(to bottom, #2c3e50, #1a252f);
+        color: white;
+        padding: 0;
+        position: fixed;
+        height: 100vh;
+        left: 0;
+        top: 0;
+        z-index: 100;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .admin-sidebar-header {
+        padding: 25px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .admin-sidebar-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        letter-spacing: 1px;
+        font-weight: 600;
+        color: white;
+      }
+
+      .admin-sidebar-header h2 i {
+        margin-right: 10px;
+        color: var(--primary);
+      }
+
+      .admin-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .admin-menu-item {
+        margin-bottom: 5px;
+      }
+
+      .admin-menu-item a {
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: all 0.3s;
+        position: relative;
+        font-weight: 500;
+        border-left: 3px solid transparent;
+      }
+
+      .admin-menu-item a i {
+        width: 24px;
+        margin-right: 10px;
+        font-size: 1.1rem;
+        text-align: center;
+      }
+
+      .admin-menu-item a:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .admin-menu-item.active a {
+        background-color: rgba(67, 97, 238, 0.15);
+        color: var(--primary);
+        border-left: 3px solid var(--primary);
+      }
+
+      .admin-content {
+        flex: 1;
+        padding: 30px;
+        margin-left: 260px;
+        transition: all 0.3s ease;
+      }
+
+      .admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
+      }
+
+      .admin-header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+        color: var(--dark);
+        font-weight: 600;
+      }
+
+      .add-category-btn {
+        padding: 10px 20px;
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-dark)
+        );
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+        text-decoration: none;
+        font-size: 0.95rem;
+      }
+
+      .add-category-btn:hover {
+        background: linear-gradient(
+          135deg,
+          var(--primary-dark),
+          var(--primary-dark)
+        );
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
+      }
+
+      .admin-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
+      }
+
+      .admin-search {
+        display: flex;
+        align-items: center;
+      }
+
+      .admin-search input {
+        padding: 10px 12px;
+        width: 300px;
+        border: 1px solid var(--light-gray);
+        border-radius: 8px 0 0 8px;
+        background-color: var(--light);
+        font-size: 1rem;
+        transition: all 0.3s;
+      }
+
+      .admin-search input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        outline: none;
+        background-color: white;
+      }
+
+      .admin-search button {
+        padding: 10px 20px;
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-dark)
+        );
+        color: white;
+        border: none;
+        border-radius: 0 8px 8px 0;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: 500;
+      }
+
+      .admin-search button:hover {
+        background: linear-gradient(
+          135deg,
+          var(--primary-dark),
+          var(--primary-dark)
+        );
+      }
+
+      .admin-table {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        margin-bottom: 30px;
+      }
+
+      .admin-table table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .admin-table th,
+      .admin-table td {
+        padding: 15px 20px;
+        text-align: left;
+        border-bottom: 1px solid var(--light-gray);
+      }
+
+      .admin-table th {
+        font-weight: 600;
+        color: var(--gray);
+        background-color: rgba(248, 249, 250, 0.5);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .admin-table tbody tr {
+        transition: all 0.3s;
+      }
+
+      .admin-table tbody tr:hover {
+        background-color: rgba(67, 97, 238, 0.03);
+      }
+
+      .admin-table-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .action-btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        border: none;
+        font-weight: 500;
+        transition: all 0.3s;
+      }
+
+      .view-btn {
+        background-color: rgba(67, 97, 238, 0.1);
+        color: var(--primary);
+      }
+
+      .view-btn:hover {
+        background-color: var(--primary);
+        color: white;
+      }
+
+      .edit-btn {
+        background-color: rgba(46, 196, 182, 0.1);
+        color: var(--secondary);
+      }
+
+      .edit-btn:hover {
+        background-color: var(--secondary);
+        color: white;
+      }
+
+      .delete-btn {
+        background-color: rgba(239, 71, 111, 0.1);
+        color: var(--danger);
+      }
+
+      .delete-btn:hover {
+        background-color: var(--danger);
+        color: white;
+      }
+
+      .category-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .category-modal.active {
+        display: flex;
+        opacity: 1;
+      }
+
+      .category-modal-content {
+        background-color: white;
+        padding: 30px;
+        border-radius: 15px;
+        max-width: 550px;
+        width: 90%;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transform: translateY(20px);
+        transition: transform 0.3s;
+        animation: modalFadeIn 0.3s forwards;
+      }
+
+      @keyframes modalFadeIn {
+        to {
+          transform: translateY(0);
+        }
+      }
+
+      .category-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--light-gray);
+      }
+
+      .category-modal-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: var(--dark);
+        font-weight: 600;
+      }
+
+      .category-modal-close {
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        color: var(--gray);
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+
+      .category-modal-close:hover {
+        background-color: rgba(239, 71, 111, 0.1);
+        color: var(--danger);
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--dark);
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--light-gray);
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s;
+        background-color: var(--light);
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        outline: none;
+        background-color: white;
+      }
+
+      .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--light-gray);
+      }
+
+      .btn {
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1rem;
+        border: none;
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-dark)
+        );
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(
+          135deg,
+          var(--primary-dark),
+          var(--primary-dark)
+        );
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
+      }
+
+      .btn-secondary {
+        background-color: var(--light);
+        color: var(--dark);
+        border: 1px solid var(--light-gray);
+      }
+
+      .btn-secondary:hover {
+        background-color: var(--light-gray);
+        transform: translateY(-2px);
+      }
+
+      .category-details {
+        margin-top: 20px;
+      }
+
+      .category-details h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+        color: var(--dark);
+        font-weight: 600;
+      }
+
+      .category-details p {
+        margin: 10px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--dark-light);
+        line-height: 1.6;
+      }
+
+      .category-details p strong {
+        color: var(--dark);
+        min-width: 120px;
+        display: inline-block;
+      }
+
+      .category-details p i {
+        color: var(--primary);
+        width: 16px;
+        text-align: center;
+      }
+
+      .books-list {
+        margin-top: 15px;
+        max-height: 250px;
+        overflow-y: auto;
+        border: 1px solid var(--light-gray);
+        padding: 15px;
+        border-radius: 8px;
+        background-color: var(--light);
+      }
+
+      .books-list ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+
+      .books-list li {
+        margin-bottom: 8px;
+        color: var(--dark-light);
+      }
+
+      .animate-item {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+
+      .animate-item.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .error-message {
+        background-color: rgba(239, 71, 111, 0.1);
+        color: var(--danger);
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        display: none;
+        align-items: center;
+        font-weight: 500;
+        box-shadow: 0 2px 10px rgba(239, 71, 111, 0.1);
+      }
+
+      .error-message i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+      }
+
+      .error-message.show {
+        display: flex;
+      }
+
+      @media (max-width: 992px) {
+        .admin-sidebar {
+          width: 80px;
+        }
+
+        .admin-sidebar-header {
+          padding: 20px 10px;
+        }
+
+        .admin-sidebar-header h2 {
+          display: none;
+        }
+
+        .admin-menu-item a {
+          padding: 15px;
+          justify-content: center;
+        }
+
+        .admin-menu-item a i {
+          margin-right: 0;
+          font-size: 1.3rem;
+        }
+
+        .admin-menu-item a span {
+          display: none;
+        }
+
+        .admin-content {
+          margin-left: 80px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .admin-container {
+          flex-direction: column;
+        }
+
+        .admin-sidebar {
+          width: 100%;
+          height: auto;
+          position: relative;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-sidebar-header {
+          padding: 15px;
+        }
+
+        .admin-sidebar-header h2 {
+          display: block;
+          font-size: 1.3rem;
+        }
+
+        .admin-menu {
+          display: flex;
+          flex-wrap: wrap;
+        }
+
+        .admin-menu-item {
+          flex: 1;
+          margin-bottom: 0;
+        }
+
+        .admin-menu-item a {
+          padding: 12px 10px;
+          flex-direction: column;
+          font-size: 0.8rem;
+          text-align: center;
+        }
+
+        .admin-menu-item a i {
+          margin: 0 0 5px 0;
+        }
+
+        .admin-menu-item a span {
+          display: block;
+        }
+
+        .admin-content {
+          margin-left: 0;
+          padding: 20px;
+        }
+
+        .admin-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 15px;
+        }
+
+        .admin-table {
+          overflow-x: auto;
+        }
+
+        .admin-search {
+          width: 100%;
+        }
+
+        .admin-search input {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="error-message" id="error-container">
+      <i class="fas fa-exclamation-circle"></i>
+      <span id="error-message">Đã xảy ra lỗi</span>
+    </div>
+
+    <div class="admin-container">
+      <div class="admin-sidebar">
+        <div class="admin-sidebar-header">
+          <h2><i class="fas fa-cogs"></i> Admin Panel</h2>
+        </div>
+        <ul class="admin-menu">
+          <li class="admin-menu-item">
+            <a href="/admin-dashboard.html">
+              <i class="fas fa-chart-line"></i>
+              <span>Tổng quan</span>
+            </a>
+          </li>
+          <li class="admin-menu-item">
+            <a href="/admin-books.html">
+              <i class="fas fa-book"></i>
+              <span>Quản lý sách</span>
+            </a>
+          </li>
+          <li class="admin-menu-item">
+            <a href="/admin-users.html">
+              <i class="fas fa-users"></i>
+              <span>Quản lý người dùng</span>
+            </a>
+          </li>
+          <li class="admin-menu-item active">
+            <a href="/admin-categories.html">
+              <i class="fas fa-tags"></i>
+              <span>Quản lý danh mục</span>
+            </a>
+          </li>
+          <li class="admin-menu-item">
+            <a href="/index.html">
+              <i class="fas fa-home"></i>
+              <span>Trang chủ</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="admin-content">
+        <div class="admin-header animate-item">
+          <h1>Quản lý danh mục</h1>
+          <button class="add-category-btn" id="add-category-btn">
+            <i class="fas fa-plus"></i> Thêm danh mục mới
+          </button>
+        </div>
+
+        <div class="admin-actions animate-item">
+          <div class="admin-search">
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Tìm kiếm danh mục"
+            />
+            <button id="search-btn">Tìm kiếm</button>
+          </div>
+        </div>
+
+        <div class="admin-table animate-item">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Tên danh mục</th>
+                <th>Mô tả</th>
+                <th>Số sách</th>
+                <th>Ngày tạo</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="categories-table">
+              <tr>
+                <td colspan="6" style="text-align: center">
+                  Đang tải dữ liệu...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-modal" id="category-modal">
+      <div class="category-modal-content">
+        <div class="category-modal-header">
+          <h2 id="modal-title">Thêm danh mục mới</h2>
+          <button class="category-modal-close">&times;</button>
+        </div>
+        <div id="category-form-container">
+          <div class="form-group">
+            <label for="category-name"
+              ><i class="fas fa-tag"></i> Tên danh mục</label
+            >
+            <input type="text" id="category-name" required />
+          </div>
+          <div class="form-group">
+            <label for="category-description"
+              ><i class="fas fa-info-circle"></i> Mô tả</label
+            >
+            <textarea
+              id="category-description"
+              placeholder="Nhập mô tả về danh mục này"
+            ></textarea>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" id="save-category-btn">
+              <i class="fas fa-save"></i> Lưu
+            </button>
+            <button class="btn btn-secondary" id="cancel-category-btn">
+              <i class="fas fa-times"></i> Hủy
+            </button>
+          </div>
+        </div>
+        <div id="category-details-container" style="display: none"></div>
+      </div>
+    </div>
+
+    <script src="/assets/js/api.service.js"></script>
+    <script src="/assets/js/helper.js"></script>
+    <script src="/assets/js/main.js"></script>
+    <script>
+      let currentCategory = null;
+      let isEditing = false;
+
+      function initAnimations() {
+        const animateItems = document.querySelectorAll(".animate-item");
+
+        if (animateItems.length > 0) {
+          animateItems.forEach((item, index) => {
+            setTimeout(() => {
+              item.classList.add("show");
+            }, 100 * index);
+          });
+        }
+      }
+
+      function showError(message) {
+        const errorContainer = document.getElementById("error-container");
+        const errorMessage = document.getElementById("error-message");
+
+        errorMessage.textContent = message;
+        errorContainer.classList.add("show");
+      }
+
+      document.addEventListener("DOMContentLoaded", async function () {
+        initAnimations();
+
+        if (!apiService.auth.isAuthenticated()) {
+          showError("Bạn cần đăng nhập để truy cập trang quản trị!");
+          setTimeout(() => {
+            window.location.href = "/index.html";
+          }, 2000);
+          return;
+        }
+
+        const user = apiService.auth.getCurrentUser();
+        if (user.role !== "admin") {
+          showError("Bạn không có quyền truy cập trang quản trị!");
+          setTimeout(() => {
+            window.location.href = "/index.html";
+          }, 2000);
+          return;
+        }
+
+        loadCategories();
+
+        document
+          .getElementById("search-btn")
+          .addEventListener("click", function () {
+            loadCategories(document.getElementById("search-input").value);
+          });
+
+        document
+          .getElementById("search-input")
+          .addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+              loadCategories(this.value);
+            }
+          });
+
+        document
+          .getElementById("add-category-btn")
+          .addEventListener("click", function () {
+            showAddCategoryModal();
+          });
+
+        document
+          .querySelector(".category-modal-close")
+          .addEventListener("click", closeModal);
+        document
+          .getElementById("cancel-category-btn")
+          .addEventListener("click", closeModal);
+
+        document
+          .getElementById("save-category-btn")
+          .addEventListener("click", saveCategory);
+      });
+
+      async function loadCategories(searchTerm = "") {
+        try {
+          const categories = await apiService.categories.getAll();
+
+          if (!categories) {
+            showError("Lỗi khi tải danh sách danh mục");
+            return;
+          }
+
+          let filteredCategories = categories;
+          if (searchTerm) {
+            filteredCategories = categories.filter(
+              (category) =>
+                category.name
+                  .toLowerCase()
+                  .includes(searchTerm.toLowerCase()) ||
+                (category.description &&
+                  category.description
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase()))
+            );
+          }
+
+          renderCategories(filteredCategories);
+        } catch (error) {
+          console.error("Error loading categories:", error);
+          showError("Lỗi khi tải danh sách danh mục");
+        }
+      }
+
+      function renderCategories(categories) {
+        const tableBody = document.getElementById("categories-table");
+
+        if (!categories || categories.length === 0) {
+          tableBody.innerHTML =
+            '<tr><td colspan="6" style="text-align: center">Không tìm thấy danh mục</td></tr>';
+          return;
+        }
+
+        tableBody.innerHTML = "";
+
+        categories.forEach((category) => {
+          const row = document.createElement("tr");
+
+          const dateCreated = new Date(category.createdAt).toLocaleDateString();
+
+          row.innerHTML = `
+            <td>${category.id}</td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-folder" style="color: var(--primary);"></i>
+                <span style="font-weight: 500;">${category.name}</span>
+              </div>
+            </td>
+            <td>${category.description || "<em>Không có mô tả</em>"}</td>
+            <td style="text-align: center;">
+              <span class="badge" style="background-color: rgba(67, 97, 238, 0.1); color: var(--primary); padding: 4px 10px; border-radius: 20px; font-weight: 500;">${
+                category.bookCount || 0
+              }</span>
+            </td>
+            <td>${dateCreated}</td>
+            <td class="admin-table-actions">
+              <button class="action-btn view-btn" data-id="${
+                category.id
+              }"><i class="fas fa-eye"></i></button>
+              <button class="action-btn edit-btn" data-id="${
+                category.id
+              }"><i class="fas fa-edit"></i></button>
+              <button class="action-btn delete-btn" data-id="${
+                category.id
+              }"><i class="fas fa-trash"></i></button>
+            </td>
+          `;
+
+          tableBody.appendChild(row);
+        });
+
+        document.querySelectorAll(".view-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const categoryId = this.getAttribute("data-id");
+            viewCategory(categoryId);
+          });
+        });
+
+        document.querySelectorAll(".edit-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const categoryId = this.getAttribute("data-id");
+            editCategory(categoryId);
+          });
+        });
+
+        document.querySelectorAll(".delete-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const categoryId = this.getAttribute("data-id");
+            deleteCategory(categoryId);
+          });
+        });
+      }
+
+      async function viewCategory(categoryId) {
+        try {
+          const category = await apiService.categories.getById(categoryId);
+
+          if (!category) {
+            alert("Không tìm thấy thông tin danh mục!");
+            return;
+          }
+
+          document.getElementById("category-form-container").style.display =
+            "none";
+          const categoryDetails = document.getElementById(
+            "category-details-container"
+          );
+          categoryDetails.style.display = "block";
+
+          let booksHtml = "<p>Không có sách nào.</p>";
+
+          if (category.books && category.books.length > 0) {
+            booksHtml = `
+              <div class="books-list">
+                <ul>
+                  ${category.books
+                    .map(
+                      (book) => `
+                    <li>${book.title} - ${book.author} (${new Date(
+                        book.createdAt
+                      ).toLocaleDateString()})</li>
+                  `
+                    )
+                    .join("")}
+                </ul>
+              </div>
+            `;
+          }
+
+          categoryDetails.innerHTML = `
+            <div class="category-details">
+              <p><i class="fas fa-hashtag"></i> <strong>ID:</strong> ${
+                category.id
+              }</p>
+              <p><i class="fas fa-tag"></i> <strong>Tên danh mục:</strong> ${
+                category.name
+              }</p>
+              <p><i class="fas fa-info-circle"></i> <strong>Mô tả:</strong> ${
+                category.description || "<em>Không có mô tả</em>"
+              }</p>
+              <p><i class="fas fa-calendar-alt"></i> <strong>Ngày tạo:</strong> ${new Date(
+                category.createdAt
+              ).toLocaleDateString()}</p>
+              <p><i class="fas fa-book"></i> <strong>Số sách:</strong> ${
+                category.books ? category.books.length : 0
+              }</p>
+              
+              <h3><i class="fas fa-list"></i> Danh sách sách</h3>
+              ${booksHtml}
+            </div>
+          `;
+
+          document.getElementById("modal-title").textContent =
+            "Chi tiết danh mục";
+          document.getElementById("category-modal").classList.add("active");
+        } catch (error) {
+          console.error("Error viewing category:", error);
+          alert("Lỗi khi tải thông tin danh mục!");
+        }
+      }
+
+      function showAddCategoryModal() {
+        isEditing = false;
+        currentCategory = null;
+
+        document.getElementById("category-name").value = "";
+        document.getElementById("category-description").value = "";
+
+        document.getElementById("category-form-container").style.display =
+          "block";
+        document.getElementById("category-details-container").style.display =
+          "none";
+
+        document.getElementById("modal-title").textContent =
+          "Thêm danh mục mới";
+        document.getElementById("category-modal").classList.add("active");
+      }
+
+      async function editCategory(categoryId) {
+        try {
+          const category = await apiService.categories.getById(categoryId);
+
+          if (!category) {
+            alert("Không tìm thấy thông tin danh mục!");
+            return;
+          }
+
+          isEditing = true;
+          currentCategory = category;
+
+          document.getElementById("category-name").value = category.name;
+          document.getElementById("category-description").value =
+            category.description || "";
+
+          document.getElementById("category-form-container").style.display =
+            "block";
+          document.getElementById("category-details-container").style.display =
+            "none";
+
+          document.getElementById("modal-title").textContent =
+            "Chỉnh sửa danh mục";
+          document.getElementById("category-modal").classList.add("active");
+        } catch (error) {
+          console.error("Error editing category:", error);
+          alert("Lỗi khi tải thông tin danh mục!");
+        }
+      }
+
+      async function saveCategory() {
+        const name = document.getElementById("category-name").value.trim();
+        const description = document
+          .getElementById("category-description")
+          .value.trim();
+
+        if (!name) {
+          alert("Vui lòng nhập tên danh mục!");
+          return;
+        }
+
+        try {
+          if (isEditing && currentCategory) {
+            await apiService.categories.update(currentCategory.id, {
+              name,
+              description,
+            });
+
+            alert("Cập nhật danh mục thành công!");
+          } else {
+            await apiService.categories.create({
+              name,
+              description,
+            });
+
+            alert("Thêm danh mục mới thành công!");
+          }
+
+          closeModal();
+          loadCategories();
+        } catch (error) {
+          console.error("Error saving category:", error);
+          alert("Lỗi khi lưu danh mục!");
+        }
+      }
+
+      async function deleteCategory(categoryId) {
+        try {
+          const category = await apiService.categories.getById(categoryId);
+
+          if (!category) {
+            alert("Không tìm thấy thông tin danh mục!");
+            return;
+          }
+
+          if (category.books && category.books.length > 0) {
+            alert(
+              `Không thể xóa danh mục có ${category.books.length} sách! Vui lòng chuyển sách sang danh mục khác trước.`
+            );
+            return;
+          }
+
+          if (
+            !confirm(`Bạn có chắc chắn muốn xóa danh mục "${category.name}"?`)
+          ) {
+            return;
+          }
+
+          await apiService.categories.delete(categoryId);
+          alert("Xóa danh mục thành công!");
+          loadCategories();
+        } catch (error) {
+          console.error("Error deleting category:", error);
+          alert("Lỗi khi xóa danh mục!");
+        }
+      }
+
+      function closeModal() {
+        document.getElementById("category-modal").classList.remove("active");
+        isEditing = false;
+        currentCategory = null;
+      }
+    </script>
+    <div id="notification-container"></div>
+  </body>
+</html>

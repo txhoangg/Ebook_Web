@@ -34,7 +34,7 @@ module.exports = (sequelize, Sequelize) => {
     },
     verified: {
       type: Sequelize.BOOLEAN,
-      defaultValue: false,
+      defaultValue: true, // Changed default to true to remove need for verification
     },
     createdAt: {
       type: Sequelize.DATE,

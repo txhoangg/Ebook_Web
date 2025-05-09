@@ -27,6 +27,15 @@ module.exports = (app) => {
 
   // Cập nhật vai trò người dùng
   router.put("/users/:id/role", admin.updateUserRole);
+  
+  // Cập nhật trạng thái xác thực người dùng
+  router.put("/users/:id/verify", admin.updateUserVerification);
+  
+  // Lấy chi tiết người dùng
+  router.get("/users/:id", admin.getUserDetails);
+  
+  // Xóa người dùng
+  router.delete("/users/:id", admin.deleteUser);
 
   // Đăng ký route
   app.use("/api/admin", router);

@@ -6,6 +6,8 @@ const Rating = db.rating;
 const Category = db.category;
 const { Sequelize, Op } = db.Sequelize;
 const logger = require("../utils/logger");
+const { handleApiError } = require("../utils/error-handler");
+const validator = require("../utils/validator");
 
 // Lấy thống kê tổng quan
 exports.getStats = async (req, res) => {
@@ -441,19 +443,160 @@ exports.updateUserRole = async (req, res) => {
 
     if (result[0] === 1) {
       res.send({
-        message: "Vai trò người dùng đã được cập nhật thành công!",
+        success: true,
+        message: "Vai trò người dùng đã được cập nhật thành công!"
       });
     } else {
       res.status(404).send({
+        success: false,
         message: `Không thể cập nhật vai trò người dùng với id=${userId}. Người dùng không tồn tại!`,
       });
     }
   } catch (err) {
-    logger.error("Error updating user role:", err);
-    res.status(500).send({
-      message:
-        err.message ||
-        `Đã xảy ra lỗi khi cập nhật vai trò người dùng với id=${req.params.id}.`,
+    handleApiError(err, res, `cập nhật vai trò người dùng với id=${req.params.id}`);
+  }
+};
+
+// Cập nhật trạng thái xác thực người dùng
+exports.updateUserVerification = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { verified } = req.body;
+
+    // Kiểm tra dữ liệu đầu vào
+    if (verified === undefined) {
+      return res.status(400).json({
+        success: false,
+        message: "Thiếu thông tin trạng thái xác thực",
+      });
+    }
+
+    // Cập nhật trong database
+    const result = await User.update(
+      { verified: Boolean(verified) },
+      { where: { id: userId } }
+    );
+
+    if (result[0] === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Không tìm thấy người dùng",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Đã cập nhật trạng thái xác thực thành công",
     });
+  } catch (error) {
+    handleApiError(error, res, `cập nhật trạng thái xác thực cho người dùng ${req.params.id}`);
+  }
+};
+
+// Lấy chi tiết người dùng
+exports.getUserDetails = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    
+    // Tìm thông tin người dùng
+    const user = await User.findByPk(userId, {
+      attributes: {
+        exclude: ["password"]
+      }
+    });
+    
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Không tìm thấy người dùng" 
+      });
+    }
+    
+    // Lấy sách của người dùng
+    const books = await Book.findAll({
+      where: { uploaderId: userId },
+      include: [{ model: Category, as: "category", attributes: ["id", "name"] }]
+    });
+    
+    // Lấy lịch sử tải xuống
+    const downloads = await Download.findAll({
+      where: { userId: userId },
+      include: [{ model: Book, attributes: ['id', 'title', 'author'] }],
+      order: [['createdAt', 'DESC']],
+      limit: 20
+    });
+    
+    // Lấy đánh giá của người dùng
+    const ratings = await Rating.findAll({
+      where: { userId: userId },
+      include: [{ model: Book, attributes: ['id', 'title', 'author'] }],
+      order: [['createdAt', 'DESC']],
+      limit: 20
+    });
+    
+    res.json({
+      success: true,
+      user,
+      books,
+      downloads,
+      ratings
+    });
+  } catch (error) {
+    handleApiError(error, res, `lấy thông tin chi tiết người dùng ${req.params.id}`);
+  }
+};
+
+// Xóa người dùng
+exports.deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    
+    // Kiểm tra không tự xóa chính mình
+    if (userId == req.userId) {
+      return res.status(400).send({
+        success: false,
+        message: "Không thể xóa tài khoản của chính bạn qua API này!"
+      });
+    }
+    
+    // Tìm thông tin người dùng trước khi xóa
+    const user = await User.findByPk(userId);
+    
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: `Không tìm thấy người dùng với id=${userId}`
+      });
+    }
+    
+    // Kiểm tra không xóa admin khác nếu bạn không phải là super-admin
+    if (user.role === 'admin' && req.userRole !== 'super-admin') {
+      return res.status(403).send({
+        success: false,
+        message: "Bạn không có quyền xóa tài khoản admin khác!"
+      });
+    }
+    
+    // Cập nhật sách của người dùng này thành anonymous
+    await Book.update(
+      { uploaderId: null },
+      { where: { uploaderId: userId } }
+    );
+    
+    // Xóa các đánh giá của người dùng
+    await Rating.destroy({ where: { userId: userId } });
+    
+    // Xóa lịch sử tải xuống
+    await Download.destroy({ where: { userId: userId } });
+    
+    // Xóa người dùng
+    await user.destroy();
+    
+    res.send({
+      success: true,
+      message: "Đã xóa người dùng thành công!"
+    });
+  } catch (error) {
+    handleApiError(error, res, `xóa người dùng ${req.params.id}`);
   }
 };

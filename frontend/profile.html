@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <base href="/" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trang cá nhân - EBook Haven</title>
+    <link rel="stylesheet" href="/assets/css/normalize.css" />
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <link rel="stylesheet" href="/assets/css/responsive.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #4361ee;
+        --primary-dark: #3a56d4;
+        --secondary: #2ec4b6;
+        --secondary-dark: #21a99d;
+        --dark: #2b2d42;
+        --dark-light: #3d405b;
+        --light: #f8f9fa;
+        --light-gray: #e9ecef;
+        --gray: #6c757d;
+        --danger: #ef476f;
+        --warning: #ffd166;
+        --success: #06d6a0;
+        --accent: #ff9f1c;
+
+        --font-main: "Poppins", sans-serif;
+
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+        --shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 15px 30px rgba(0, 0, 0, 0.1);
+        --shadow-hover: 0 10px 25px rgba(67, 97, 238, 0.1);
+
+        --radius-sm: 8px;
+        --radius: 12px;
+        --radius-lg: 20px;
+
+        --transition: all 0.3s ease;
+      }
+
+      body {
+        font-family: var(--font-main);
+        background-color: #f8fafc;
+        color: var(--dark);
+        line-height: 1.6;
+      }
+
+      .profile-container {
+        padding: 50px 0;
+      }
+
+      .profile-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 40px;
+        background-color: white;
+        border-radius: var(--radius);
+        padding: 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+      }
+
+      .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: white;
+        margin-right: 30px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        border: 4px solid white;
+      }
+
+      .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .profile-info {
+        flex: 1;
+      }
+
+      .profile-info h1 {
+        margin: 0 0 10px;
+        font-size: 2.2rem;
+        color: var(--dark);
+        font-weight: 700;
+      }
+
+      .profile-bio {
+        margin: 5px 0 20px;
+        font-style: italic;
+        color: var(--gray);
+        line-height: 1.6;
+        padding-left: 15px;
+        border-left: 3px solid var(--primary);
+        background-color: var(--light);
+        padding: 15px;
+        border-radius: var(--radius-sm);
+      }
+
+      .profile-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        color: var(--gray);
+        font-size: 0.95rem;
+      }
+
+      .profile-meta span {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 15px;
+        background-color: var(--light);
+        border-radius: 20px;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .profile-meta span i {
+        color: var(--primary);
+      }
+
+      .profile-tabs {
+        display: flex;
+        background-color: white;
+        border-radius: var(--radius);
+        overflow: hidden;
+        margin-bottom: 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+      }
+
+      .profile-tab {
+        flex: 1;
+        padding: 15px 20px;
+        cursor: pointer;
+        text-align: center;
+        position: relative;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        color: var(--dark-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .profile-tab i {
+        font-size: 1.1rem;
+      }
+
+      .profile-tab:hover {
+        background-color: var(--light);
+      }
+
+      .profile-tab.active {
+        color: var(--primary);
+        background-color: var(--light);
+      }
+
+      .profile-tab.active::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+      }
+
+      .profile-content {
+        margin-bottom: 50px;
+      }
+
+      .profile-section {
+        display: none;
+        background-color: white;
+        border-radius: var(--radius);
+        padding: 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        animation: fadeIn 0.5s ease;
+      }
+
+      .profile-section.active {
+        display: block;
+      }
+
+      .profile-section h2 {
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+        color: var(--dark);
+        position: relative;
+        padding-bottom: 10px;
+        display: inline-block;
+      }
+
+      .profile-section h2:after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        border-radius: 1.5px;
+      }
+
+      .edit-profile-form {
+        max-width: 800px;
+      }
+
+      .edit-profile-form .form-group {
+        margin-bottom: 25px;
+      }
+
+      .edit-profile-form label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 500;
+        color: var(--dark);
+      }
+
+      .edit-profile-form input,
+      .edit-profile-form textarea {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid var(--light-gray);
+        border-radius: var(--radius-sm);
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background-color: var(--light);
+      }
+
+      .edit-profile-form input:focus,
+      .edit-profile-form textarea:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        outline: none;
+        background-color: white;
+      }
+
+      .edit-profile-form input:disabled {
+        background-color: var(--light-gray);
+        cursor: not-allowed;
+      }
+
+      .edit-profile-form textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .form-actions {
+        margin-top: 30px;
+        display: flex;
+        gap: 15px;
+      }
+
+      .form-actions button {
+        padding: 12px 25px;
+        border-radius: 30px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1rem;
+      }
+
+      .form-actions .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-dark)
+        );
+        color: white;
+        border: none;
+      }
+
+      .form-actions .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-actions .btn-secondary {
+        background-color: white;
+        color: var(--dark);
+        border: 1px solid var(--light-gray);
+      }
+
+      .form-actions .btn-secondary:hover {
+        background-color: var(--light);
+      }
+
+      .book-list-empty {
+        padding: 50px 30px;
+        text-align: center;
+        background-color: var(--light);
+        border-radius: var(--radius);
+      }
+
+      .book-list-empty h3 {
+        font-size: 1.5rem;
+        color: var(--dark);
+        margin-bottom: 15px;
+      }
+
+      .book-list-empty p {
+        color: var(--gray);
+        margin-bottom: 25px;
+      }
+
+      .book-actions {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .book-actions .btn {
+        flex: 1;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+      }
+
+      .download-date {
+        font-size: 0.9rem;
+        color: var(--gray);
+        margin-top: 10px;
+        padding: 5px 10px;
+        background-color: var(--light);
+        border-radius: 15px;
+        display: inline-block;
+      }
+
+      .book-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 30px;
+      }
+
+      .book-card {
+        background-color: white;
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        cursor: pointer;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+      }
+
+      .book-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .book-cover {
+        height: 280px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .book-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+      }
+
+      .book-card:hover .book-cover img {
+        transform: scale(1.08);
+      }
+
+      .book-info {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        border-top: 1px solid rgba(0, 0, 0, 0.03);
+      }
+
+      .book-category {
+        font-size: 0.75rem;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+
+      .book-title {
+        font-size: 1.15rem;
+        margin-bottom: 8px;
+        font-weight: 600;
+        line-height: 1.4;
+        color: var(--dark);
+        transition: color 0.3s;
+      }
+
+      .book-card:hover .book-title {
+        color: var(--primary);
+      }
+
+      .book-author {
+        font-size: 0.95rem;
+        color: var(--gray);
+        margin-bottom: 15px;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .profile-header {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .profile-avatar {
+          margin-right: 0;
+          margin-bottom: 20px;
+        }
+
+        .profile-meta {
+          justify-content: center;
+        }
+
+        .profile-tab {
+          padding: 12px 15px;
+          font-size: 0.9rem;
+        }
+
+        .profile-tab i {
+          margin-right: 5px;
+        }
+
+        .book-grid {
+          grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+          gap: 20px;
+        }
+
+        .book-cover {
+          height: 220px;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .profile-tabs {
+          flex-wrap: wrap;
+        }
+
+        .profile-tab {
+          flex: 1 0 50%;
+        }
+
+        .profile-section {
+          padding: 20px;
+        }
+
+        .book-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container header-container">
+        <a href="/index.html" class="logo">Ebook<span>Haven</span></a>
+        <form class="search-bar">
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Tìm kiếm sách, tác giả..."
+          />
+          <button><i class="fas fa-search"></i></button>
+        </form>
+        <div class="mobile-menu-toggle" id="mobile-menu-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <ul class="nav-menu" id="nav-menu">
+          <li>
+            <a href="/index.html"><i class="fas fa-home"></i> Trang chủ</a>
+          </li>
+          <li>
+            <a href="/categories.html"><i class="fas fa-tags"></i> Danh mục</a>
+          </li>
+          <li>
+            <a href="/upload-book.html"
+              ><i class="fas fa-upload"></i> Tải lên sách</a
+            >
+          </li>
+          <li>
+            <a href="#" id="login-btn"
+              ><i class="fas fa-sign-in-alt"></i> Đăng nhập</a
+            >
+          </li>
+          <li>
+            <a href="#" id="register-btn"
+              ><i class="fas fa-user-plus"></i> Đăng ký</a
+            >
+          </li>
+        </ul>
+      </div>
+    </header>
+
+    <div class="container profile-container">
+      <div class="profile-header">
+        <div class="profile-avatar" id="profile-avatar"></div>
+        <div class="profile-info">
+          <h1 id="profile-name">Đang tải...</h1>
+          <div class="profile-bio" id="profile-bio"></div>
+          <div class="profile-meta">
+            <span id="profile-joined">
+              <i class="fas fa-calendar-alt"></i> Tham gia: Đang tải...
+            </span>
+            <span id="profile-uploads">
+              <i class="fas fa-book"></i> Sách đã chia sẻ: Đang tải...
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-tabs">
+        <div class="profile-tab active" data-tab="my-books">
+          <i class="fas fa-book"></i> Sách của tôi
+        </div>
+        <div class="profile-tab" data-tab="favorites">
+          <i class="fas fa-heart"></i> Sách yêu thích
+        </div>
+        <div class="profile-tab" data-tab="downloads">
+          <i class="fas fa-download"></i> Lịch sử tải xuống
+        </div>
+        <div class="profile-tab" data-tab="edit-profile">
+          <i class="fas fa-user-edit"></i> Chỉnh sửa hồ sơ
+        </div>
+      </div>
+
+      <div class="profile-content">
+        <div class="profile-section active" id="my-books-section">
+          <h2>Sách đã chia sẻ</h2>
+          <div class="book-grid" id="my-books-grid"></div>
+          <div
+            class="book-list-empty"
+            id="my-books-empty"
+            style="display: none"
+          >
+            <h3>Bạn chưa chia sẻ sách nào</h3>
+            <p>Hãy bắt đầu chia sẻ kiến thức của bạn!</p>
+            <a href="upload-book.html" class="btn btn-primary"
+              ><i class="fas fa-upload"></i> Tải lên sách mới</a
+            >
+          </div>
+        </div>
+
+        <div class="profile-section" id="favorites-section">
+          <h2>Sách yêu thích</h2>
+          <div class="book-grid" id="favorites-grid"></div>
+          <div
+            class="book-list-empty"
+            id="favorites-empty"
+            style="display: none"
+          >
+            <h3>Bạn chưa có sách yêu thích nào</h3>
+            <p>Hãy khám phá thư viện và thêm sách vào danh sách yêu thích!</p>
+            <a href="/index.html" class="btn btn-primary"
+              ><i class="fas fa-search"></i> Khám phá sách</a
+            >
+          </div>
+        </div>
+
+        <div class="profile-section" id="downloads-section">
+          <h2>Lịch sử tải xuống</h2>
+          <div class="book-grid" id="downloads-grid"></div>
+          <div
+            class="book-list-empty"
+            id="downloads-empty"
+            style="display: none"
+          >
+            <h3>Bạn chưa tải xuống sách nào</h3>
+            <p>Hãy khám phá thư viện và tải sách bạn thích!</p>
+            <a href="/index.html" class="btn btn-primary"
+              ><i class="fas fa-search"></i> Khám phá sách</a
+            >
+          </div>
+        </div>
+
+        <div class="profile-section" id="edit-profile-section">
+          <h2>Chỉnh sửa hồ sơ</h2>
+          <form class="edit-profile-form" id="edit-profile-form">
+            <div class="form-group">
+              <label for="display-name">
+                <i class="fas fa-user"></i> Tên hiển thị
+              </label>
+              <input type="text" id="display-name" name="displayName" />
+            </div>
+            <div class="form-group">
+              <label for="email"> <i class="fas fa-envelope"></i> Email </label>
+              <input type="email" id="email" name="email" disabled />
+            </div>
+            <div class="form-group">
+              <label for="bio">
+                <i class="fas fa-info-circle"></i> Giới thiệu
+              </label>
+              <textarea
+                id="bio"
+                name="bio"
+                rows="4"
+                placeholder="Chia sẻ một chút về bản thân bạn..."
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="current-password">
+                <i class="fas fa-lock"></i> Mật khẩu hiện tại (để thay đổi mật
+                khẩu)
+              </label>
+              <input
+                type="password"
+                id="current-password"
+                name="currentPassword"
+                placeholder="Nhập mật khẩu hiện tại nếu muốn đổi mật khẩu"
+              />
+            </div>
+            <div class="form-group">
+              <label for="new-password">
+                <i class="fas fa-key"></i> Mật khẩu mới
+              </label>
+              <input
+                type="password"
+                id="new-password"
+                name="newPassword"
+                placeholder="Nhập mật khẩu mới (ít nhất 6 ký tự)"
+              />
+            </div>
+            <div class="form-group">
+              <label for="confirm-password">
+                <i class="fas fa-check-circle"></i> Xác nhận mật khẩu mới
+              </label>
+              <input
+                type="password"
+                id="confirm-password"
+                name="confirmPassword"
+                placeholder="Xác nhận lại mật khẩu mới"
+              />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Lưu thay đổi
+              </button>
+              <button type="button" class="btn btn-secondary" id="cancel-edit">
+                <i class="fas fa-times"></i> Hủy
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="container footer-container">
+        <div class="footer-col">
+          <h3>Ebook Haven</h3>
+          <p>
+            Thư viện sách điện tử cho mọi người yêu thích đọc sách và học hỏi.
+          </p>
+
+          <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3>Khám phá</h3>
+          <ul>
+            <li>
+              <a href="/categories.html"
+                ><i class="fas fa-angle-right"></i> Danh mục</a
+              >
+            </li>
+            <li>
+              <a href="/upload-book.html"
+                ><i class="fas fa-angle-right"></i> Tải lên sách</a
+              >
+            </li>
+            <li>
+              <a href="/profile.html"
+                ><i class="fas fa-angle-right"></i> Trang cá nhân</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Liên kết</h3>
+          <ul>
+            <li>
+              <a href="#"><i class="fas fa-angle-right"></i> Giới thiệu</a>
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fas fa-angle-right"></i> Điều khoản sử dụng</a
+              >
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fas fa-angle-right"></i> Chính sách bảo mật</a
+              >
+            </li>
+            <li>
+              <a href="#"><i class="fas fa-angle-right"></i> Liên hệ</a>
+            </li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Hỗ trợ</h3>
+          <ul>
+            <li>
+              <a href="#"
+                ><i class="fas fa-angle-right"></i> Câu hỏi thường gặp</a
+              >
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fas fa-angle-right"></i> Hướng dẫn sử dụng</a
+              >
+            </li>
+            <li>
+              <a href="#"><i class="fas fa-angle-right"></i> Báo cáo lỗi</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="container">
+        <div class="copyright">
+          &copy; 2025 Ebook Haven. Tất cả quyền được bảo lưu.
+        </div>
+      </div>
+    </footer>
+
+    <script src="/assets/js/notification.js"></script>
+    <script src="/assets/js/api.service.js"></script>
+    <script src="/assets/js/image-utils.js"></script>
+    <script src="/assets/js/helper.js"></script>
+    <script src="/assets/js/main.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async function () {
+        if (!apiService.auth.isAuthenticated()) {
+          showAuthModal("login");
+
+          alert("Bạn cần đăng nhập để xem trang cá nhân!");
+          return;
+        }
+
+        const user = apiService.auth.getCurrentUser();
+
+        document.getElementById("profile-name").textContent =
+          user.displayName || user.username;
+        document.getElementById("profile-avatar").textContent = user.username
+          .charAt(0)
+          .toUpperCase();
+        document.getElementById(
+          "profile-joined"
+        ).innerHTML = `<i class="fas fa-calendar-alt"></i> Tham gia: ${new Date(
+          user.createdAt
+        ).toLocaleDateString()}`;
+
+        if (user.bio) {
+          document.getElementById("profile-bio").textContent = user.bio;
+          document.getElementById("profile-bio").style.display = "block";
+        } else {
+          document.getElementById("profile-bio").style.display = "none";
+        }
+
+        try {
+          const userDetails = await apiService.users.getProfile();
+          console.log("Thông tin chi tiết người dùng:", userDetails);
+
+          document.getElementById(
+            "profile-uploads"
+          ).innerHTML = `<i class="fas fa-book"></i> Sách đã chia sẻ: ${
+            userDetails.uploadCount || 0
+          }`;
+
+          if (userDetails.bio) {
+            document.getElementById("profile-bio").textContent =
+              userDetails.bio;
+            document.getElementById("profile-bio").style.display = "block";
+          }
+
+          document.getElementById("display-name").value =
+            userDetails.displayName || user.displayName || user.username;
+          document.getElementById("email").value =
+            userDetails.email || user.email;
+          document.getElementById("bio").value =
+            userDetails.bio || user.bio || "";
+
+          await loadMyBooks();
+          await loadFavoriteBooks();
+          await loadDownloadHistory();
+        } catch (error) {
+          console.error("Error loading user details:", error);
+        }
+
+        const tabs = document.querySelectorAll(".profile-tab");
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", function () {
+            tabs.forEach((t) => {
+              t.classList.remove("active");
+            });
+
+            this.classList.add("active");
+
+            document.querySelectorAll(".profile-section").forEach((section) => {
+              section.classList.remove("active");
+            });
+
+            const tabId = this.dataset.tab;
+            document.getElementById(`${tabId}-section`).classList.add("active");
+          });
+        });
+
+        document
+          .getElementById("edit-profile-form")
+          .addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const displayName = document.getElementById("display-name").value;
+            const bio = document.getElementById("bio").value;
+            const currentPassword =
+              document.getElementById("current-password").value;
+            const newPassword = document.getElementById("new-password").value;
+            const confirmPassword =
+              document.getElementById("confirm-password").value;
+
+            if (newPassword && newPassword !== confirmPassword) {
+              notifications.error("Mật khẩu xác nhận không khớp!");
+              return;
+            }
+
+            try {
+              console.log("Gửi dữ liệu cập nhật:", { displayName, bio });
+
+              const response = await apiService.users.updateProfile({
+                displayName,
+                bio,
+                currentPassword: currentPassword || undefined,
+                newPassword: newPassword || undefined,
+              });
+
+              if (
+                response.success ||
+                response.message?.includes("thành công")
+              ) {
+                notifications.success("Cập nhật hồ sơ thành công!");
+
+                const user = apiService.auth.getCurrentUser();
+                const updatedUser = {
+                  ...user,
+                  displayName: displayName || user.displayName,
+                  bio: bio || user.bio,
+                };
+
+                console.log("Thông tin người dùng cũ:", user);
+                console.log("Thông tin người dùng mới:", updatedUser);
+
+                apiService.auth.setUser(updatedUser);
+
+                document.getElementById("profile-name").textContent =
+                  displayName || user.username;
+                document.getElementById("profile-bio").textContent = bio;
+                document.getElementById("profile-bio").style.display = bio
+                  ? "block"
+                  : "none";
+
+                // Xóa mật khẩu đã nhập
+                document.getElementById("current-password").value = "";
+                document.getElementById("new-password").value = "";
+                document.getElementById("confirm-password").value = "";
+
+                // Chuyển về tab hồ sơ
+                setTimeout(() => {
+                  document
+                    .querySelector('.profile-tab[data-tab="my-books"]')
+                    .click();
+                }, 1000);
+              } else {
+                notifications.error(response.message || "Cập nhật thất bại!");
+              }
+            } catch (error) {
+              console.error("Error updating profile:", error);
+              notifications.error("Đã xảy ra lỗi khi cập nhật hồ sơ!");
+            }
+          });
+
+        document
+          .getElementById("cancel-edit")
+          .addEventListener("click", function () {
+            // Quay lại tab sách của tôi
+            document.querySelector('.profile-tab[data-tab="my-books"]').click();
+          });
+      });
+
+      async function loadMyBooks() {
+        try {
+          console.log("Loading my books...");
+          const myBooks = await apiService.users.getMyBooks();
+          console.log("My books:", myBooks);
+
+          if (myBooks && myBooks.length > 0) {
+            renderMyBooks(myBooks);
+            document.getElementById("my-books-empty").style.display = "none";
+            document.getElementById("my-books-grid").style.display = "grid";
+          } else {
+            document.getElementById("my-books-grid").style.display = "none";
+            document.getElementById("my-books-empty").style.display = "block";
+          }
+        } catch (error) {
+          console.error("Error loading my books:", error);
+          document.getElementById("my-books-grid").style.display = "none";
+          document.getElementById("my-books-empty").style.display = "block";
+        }
+      }
+
+      function renderMyBooks(books) {
+        const container = document.getElementById("my-books-grid");
+        container.innerHTML = "";
+
+        books.forEach((book) => {
+          const bookCard = document.createElement("div");
+          bookCard.className = "book-card";
+
+          let coverPath = "/api/placeholder/220/250";
+          if (book.coverPath) {
+            if (!book.coverPath.startsWith("/")) {
+              coverPath = `/${book.coverPath}`;
+            } else {
+              coverPath = book.coverPath;
+            }
+          }
+
+          const isNew =
+            new Date(book.createdAt) >
+            new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+          let badgeHTML = "";
+          if (book.featured) {
+            badgeHTML = `<div class="book-badge featured">Nổi bật</div>`;
+          } else if (isNew) {
+            badgeHTML = `<div class="book-badge new">Mới</div>`;
+          }
+
+          bookCard.innerHTML = `
+            <div class="book-cover">
+              <img src="${coverPath}" alt="${book.title}" 
+                   onerror="this.onerror=null; this.src='/api/placeholder/220/250';"
+                   loading="lazy">
+              ${badgeHTML}
+            </div>
+            <div class="book-info">
+              <div class="book-category">${
+                book.category?.name || "Không phân loại"
+              }</div>
+              <h3 class="book-title">${book.title}</h3>
+              <div class="book-author">${book.author}</div>
+              <div class="book-actions">
+                <a href="book-detail.html?id=${
+                  book.id
+                }" class="btn btn-primary">Xem chi tiết</a>
+              </div>
+            </div>
+          `;
+
+          container.appendChild(bookCard);
+        });
+      }
+
+      async function loadFavoriteBooks() {
+        try {
+          console.log("Loading favorite books...");
+          const favoriteBooks = await apiService.users.getFavoriteBooks();
+          console.log("Favorite books:", favoriteBooks);
+
+          if (favoriteBooks && favoriteBooks.length > 0) {
+            renderFavoriteBooks(favoriteBooks);
+            document.getElementById("favorites-empty").style.display = "none";
+            document.getElementById("favorites-grid").style.display = "grid";
+          } else {
+            document.getElementById("favorites-grid").style.display = "none";
+            document.getElementById("favorites-empty").style.display = "block";
+          }
+        } catch (error) {
+          console.error("Error loading favorite books:", error);
+          document.getElementById("favorites-grid").style.display = "none";
+          document.getElementById("favorites-empty").style.display = "block";
+        }
+      }
+
+      function renderFavoriteBooks(books) {
+        const container = document.getElementById("favorites-grid");
+        container.innerHTML = "";
+
+        books.forEach((book) => {
+          const bookCard = document.createElement("div");
+          bookCard.className = "book-card";
+
+          let coverPath = "/api/placeholder/220/250";
+          if (book.coverPath) {
+            if (!book.coverPath.startsWith("/")) {
+              coverPath = `/${book.coverPath}`;
+            } else {
+              coverPath = book.coverPath;
+            }
+          }
+
+          const isNew =
+            new Date(book.createdAt) >
+            new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+          let badgeHTML = "";
+          if (book.featured) {
+            badgeHTML = `<div class="book-badge featured">Nổi bật</div>`;
+          } else if (isNew) {
+            badgeHTML = `<div class="book-badge new">Mới</div>`;
+          }
+
+          bookCard.innerHTML = `
+            <div class="book-cover">
+              <img src="${coverPath}" alt="${book.title}" 
+                   onerror="this.onerror=null; this.src='/api/placeholder/220/250';"
+                   loading="lazy">
+              ${badgeHTML}
+            </div>
+            <div class="book-info">
+              <div class="book-category">${
+                book.category?.name || "Không phân loại"
+              }</div>
+              <h3 class="book-title">${book.title}</h3>
+              <div class="book-author">${book.author}</div>
+              <div class="book-actions">
+                <a href="book-detail.html?id=${
+                  book.id
+                }" class="btn btn-primary">Xem chi tiết</a>
+                <button class="btn btn-danger remove-favorite" data-id="${
+                  book.id
+                }">Xóa khỏi yêu thích</button>
+              </div>
+            </div>
+          `;
+
+          container.appendChild(bookCard);
+        });
+
+        document.querySelectorAll(".remove-favorite").forEach((button) => {
+          button.addEventListener("click", async function (e) {
+            e.stopPropagation();
+            const bookId = this.getAttribute("data-id");
+
+            try {
+              const response = await apiService.users.removeFromFavorites(
+                bookId
+              );
+              if (response.success || response.message) {
+                notifications.success(
+                  response.message || "Đã xóa sách khỏi danh sách yêu thích!"
+                );
+                await loadFavoriteBooks();
+              }
+            } catch (error) {
+              console.error("Error removing favorite:", error);
+              notifications.error("Có lỗi xảy ra khi xóa khỏi yêu thích!");
+            }
+          });
+        });
+      }
+
+      async function loadDownloadHistory() {
+        try {
+          console.log("Loading download history...");
+          const downloadHistory = await apiService.users.getDownloadHistory();
+          console.log("Download history:", downloadHistory);
+
+          if (downloadHistory && downloadHistory.length > 0) {
+            renderDownloadHistory(downloadHistory);
+            document.getElementById("downloads-empty").style.display = "none";
+            document.getElementById("downloads-grid").style.display = "grid";
+          } else {
+            document.getElementById("downloads-grid").style.display = "none";
+            document.getElementById("downloads-empty").style.display = "block";
+          }
+        } catch (error) {
+          console.error("Error loading download history:", error);
+          document.getElementById("downloads-grid").style.display = "none";
+          document.getElementById("downloads-empty").style.display = "block";
+        }
+      }
+
+      function renderDownloadHistory(books) {
+        const container = document.getElementById("downloads-grid");
+        container.innerHTML = "";
+
+        books.forEach((book) => {
+          const bookCard = document.createElement("div");
+          bookCard.className = "book-card";
+
+          let coverPath = "/api/placeholder/220/250";
+          if (book.coverPath) {
+            if (!book.coverPath.startsWith("/")) {
+              coverPath = `/${book.coverPath}`;
+            } else {
+              coverPath = book.coverPath;
+            }
+          }
+
+          const downloadDate = new Date(book.downloadedAt).toLocaleDateString();
+
+          const isNew =
+            new Date(book.createdAt) >
+            new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+          let badgeHTML = "";
+          if (book.featured) {
+            badgeHTML = `<div class="book-badge featured">Nổi bật</div>`;
+          } else if (isNew) {
+            badgeHTML = `<div class="book-badge new">Mới</div>`;
+          }
+
+          bookCard.innerHTML = `
+            <div class="book-cover">
+              <img src="${coverPath}" alt="${book.title}" 
+                   onerror="this.onerror=null; this.src='/api/placeholder/220/250';"
+                   loading="lazy">
+              ${badgeHTML}
+            </div>
+            <div class="book-info">
+              <div class="book-category">${
+                book.category?.name || "Không phân loại"
+              }</div>
+              <h3 class="book-title">${book.title}</h3>
+              <div class="book-author">${book.author}</div>
+              <div class="download-date"><i class="fas fa-calendar-check"></i> Đã tải: ${downloadDate}</div>
+              <div class="book-actions">
+                <a href="book-detail.html?id=${
+                  book.id
+                }" class="btn btn-primary">Xem chi tiết</a>
+                <button class="btn btn-secondary download-again" data-id="${
+                  book.id
+                }"><i class="fas fa-download"></i> Tải lại</button>
+              </div>
+            </div>
+          `;
+
+          container.appendChild(bookCard);
+        });
+
+        document.querySelectorAll(".download-again").forEach((button) => {
+          button.addEventListener("click", function (e) {
+            e.stopPropagation();
+            const bookId = this.getAttribute("data-id");
+            apiService.books.download(bookId);
+            notifications.info("Đang tải xuống sách...");
+          });
+        });
+      }
+    </script>
+    <div id="notification-container"></div>
+  </body>
+</html>

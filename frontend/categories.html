@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <base href="/" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Danh mục sách - EBook Haven</title>
+    <link rel="stylesheet" href="/assets/css/normalize.css" />
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <link rel="stylesheet" href="/assets/css/responsive.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #4361ee;
+        --primary-dark: #3a56d4;
+        --secondary: #2ec4b6;
+        --secondary-dark: #21a99d;
+        --dark: #2b2d42;
+        --dark-light: #3d405b;
+        --light: #f8f9fa;
+        --light-gray: #e9ecef;
+        --gray: #6c757d;
+        --danger: #ef476f;
+        --warning: #ffd166;
+        --success: #06d6a0;
+        --accent: #ff9f1c;
+
+        --font-main: "Poppins", sans-serif;
+
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+        --shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 15px 30px rgba(0, 0, 0, 0.1);
+        --shadow-hover: 0 10px 25px rgba(67, 97, 238, 0.1);
+
+        --radius-sm: 8px;
+        --radius: 12px;
+        --radius-lg: 20px;
+
+        --transition: all 0.3s ease;
+      }
+
+      body {
+        font-family: var(--font-main);
+        background-color: #f8fafc;
+        color: var(--dark);
+        line-height: 1.6;
+      }
+
+      .categories-container {
+        padding: 50px 0;
+      }
+
+      .categories-header {
+        margin-bottom: 40px;
+        text-align: center;
+        position: relative;
+      }
+
+      .categories-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 15px;
+      }
+
+      .categories-header p {
+        font-size: 1.1rem;
+        color: var(--gray);
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .categories-header:after {
+        content: "";
+        display: block;
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        margin: 20px auto 0;
+        border-radius: 2px;
+      }
+
+      .category-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 40px;
+        justify-content: center;
+      }
+
+      .category-item {
+        background-color: white;
+        padding: 10px 20px;
+        border-radius: 30px;
+        box-shadow: var(--shadow-sm);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        font-weight: 500;
+      }
+
+      .category-item:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .category-item.active {
+        background-color: var(--primary);
+        color: white;
+        border-color: var(--primary);
+      }
+
+      .category-books {
+        margin-top: 30px;
+        background-color: white;
+        border-radius: var(--radius);
+        padding: 30px;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(0, 0, 0, 0.03);
+      }
+
+      .category-books h2 {
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+        color: var(--dark);
+        position: relative;
+        padding-bottom: 10px;
+        display: inline-block;
+      }
+
+      .category-books h2:after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        border-radius: 1.5px;
+      }
+
+      .book-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 30px;
+      }
+
+      .book-card {
+        background-color: white;
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        cursor: pointer;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .book-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .book-cover {
+        height: 280px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .book-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+      }
+
+      .book-card:hover .book-cover img {
+        transform: scale(1.08);
+      }
+
+      .book-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 5px 12px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-radius: 20px;
+        z-index: 2;
+      }
+
+      .book-badge.featured {
+        background-color: rgba(255, 159, 28, 0.9);
+        color: white;
+      }
+
+      .book-badge.new {
+        background-color: rgba(46, 196, 182, 0.9);
+        color: white;
+      }
+
+      .book-info {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        border-top: 1px solid rgba(0, 0, 0, 0.03);
+      }
+
+      .book-category {
+        font-size: 0.75rem;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+
+      .book-title {
+        font-size: 1.15rem;
+        margin-bottom: 8px;
+        font-weight: 600;
+        line-height: 1.4;
+        color: var(--dark);
+        transition: color 0.3s;
+      }
+
+      .book-card:hover .book-title {
+        color: var(--primary);
+      }
+
+      .book-author {
+        font-size: 0.95rem;
+        color: var(--gray);
+        margin-bottom: 15px;
+      }
+
+      .book-stats {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+        padding-top: 15px;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        font-size: 0.85rem;
+        color: var(--gray);
+      }
+
+      .book-stats span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .book-stats i {
+        font-size: 0.95rem;
+        color: var(--primary);
+      }
+
+      .no-books {
+        text-align: center;
+        padding: 50px 20px;
+        background-color: var(--light);
+        border-radius: var(--radius);
+        margin-top: 20px;
+      }
+
+      .no-books h3 {
+        font-size: 1.5rem;
+        color: var(--dark);
+        margin-bottom: 15px;
+      }
+
+      .no-books p {
+        color: var(--gray);
+        margin-bottom: 25px;
+      }
+
+      @media (max-width: 768px) {
+        .categories-header h1 {
+          font-size: 2rem;
+        }
+
+        .category-books {
+          padding: 20px;
+        }
+
+        .book-grid {
+          grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+          gap: 20px;
+        }
+
+        .book-cover {
+          height: 220px;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .categories-container {
+          padding: 30px 0;
+        }
+
+        .categories-header h1 {
+          font-size: 1.8rem;
+        }
+
+        .category-list {
+          justify-content: flex-start;
+          overflow-x: auto;
+          padding-bottom: 10px;
+          -webkit-overflow-scrolling: touch;
+          scroll-snap-type: x mandatory;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+
+        .category-list::-webkit-scrollbar {
+          display: none;
+        }
+
+        .category-item {
+          scroll-snap-align: start;
+          white-space: nowrap;
+        }
+
+        .book-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container header-container">
+        <a href="/index.html" class="logo">Ebook<span>Haven</span></a>
+        <form class="search-bar">
+          <input
+            type="text"
+            id="search-input"
+            placeholder="Tìm kiếm sách, tác giả..."
+          />
+          <button><i class="fas fa-search"></i></button>
+        </form>
+        <div class="mobile-menu-toggle" id="mobile-menu-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <ul class="nav-menu" id="nav-menu">
+          <li>
+            <a href="/index.html"><i class="fas fa-home"></i> Trang chủ</a>
+          </li>
+          <li>
+            <a href="/categories.html" class="active"
+              ><i class="fas fa-tags"></i> Danh mục</a
+            >
+          </li>
+          <li>
+            <a href="/upload-book.html"
+              ><i class="fas fa-upload"></i> Tải lên sách</a
+            >
+          </li>
+          <li>
+            <a href="#" id="login-btn"
+              ><i class="fas fa-sign-in-alt"></i> Đăng nhập</a
+            >
+          </li>
+          <li>
+            <a href="#" id="register-btn"
+              ><i class="fas fa-user-plus"></i> Đăng ký</a
+            >
+          </li>
+        </ul>
+      </div>
+    </header>
+
+    <div class="container categories-container">
+      <div class="categories-header">
+        <h1>Khám phá sách theo danh mục</h1>
+        <p>Tìm kiếm sách theo chủ đề yêu thích và mở rộng kiến thức của bạn</p>
+      </div>
+
+      <div class="category-list" id="category-list">
+        <div class="category-item active" data-id="">Tất cả</div>
+      </div>
+
+      <div class="category-books">
+        <h2 id="category-title">Tất cả sách</h2>
+        <div class="book-grid" id="category-books-grid">
+          <!-- Sách sẽ được render bởi JavaScript -->
+        </div>
+
+        <div class="no-books" id="no-books" style="display: none">
+          <h3>Không tìm thấy sách nào</h3>
+          <p>Hãy thử chọn danh mục khác hoặc quay lại sau.</p>
+          <a href="/index.html" class="btn btn-primary">
+            <i class="fas fa-home"></i> Quay lại trang chủ
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="container footer-container">
+        <div class="footer-col">
+          <h3>Ebook Haven</h3>
+          <p>
+            Thư viện sách điện tử cho mọi người yêu thích đọc sách và học hỏi.
+          </p>
+
+          <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h3>Khám phá</h3>
+          <ul>
+            <li>
+              <a href="/categories.html"
+                ><i class="fas fa-angle-right"></i> Danh mục</a
+              >
+            </li>
+            <li>
+              <a href="/upload-book.html"
+                ><i class="fas fa-angle-right"></i> Tải lên sách</a
+              >
+            </li>
+            <li>
+              <a href="/profile.html"
+                ><i class="fas fa-angle-right"></i> Trang cá nhân</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Liên kết</h3>
+          <ul>
+            <li>
+              <a href="#"><i class="fas fa-angle-right"></i> Giới thiệu</a>
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fas fa-angle-right"></i> Điều khoản sử dụng</a
+              >
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fas fa-angle-right"></i> Chính sách bảo mật</a
+              >
+            </li>
+            <li>
+              <a href="#"><i class="fas fa-angle-right"></i> Liên hệ</a>
+            </li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Hỗ trợ</h3>
+          <ul>
+            <li>
+              <a href="#"
+                ><i class="fas fa-angle-right"></i> Câu hỏi thường gặp</a
+              >
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fas fa-angle-right"></i> Hướng dẫn sử dụng</a
+              >
+            </li>
+            <li>
+              <a href="#"><i class="fas fa-angle-right"></i> Báo cáo lỗi</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="container">
+        <div class="copyright">
+          &copy; 2025 Ebook Haven. Tất cả quyền được bảo lưu.
+        </div>
+      </div>
+    </footer>
+
+    <script src="/assets/js/notification.js"></script>
+    <script src="/assets/js/api.service.js"></script>
+    <script src="/assets/js/image-utils.js"></script>
+    <script src="/assets/js/helper.js"></script>
+    <script src="/assets/js/main.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async function () {
+        let selectedCategoryId = "";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryIdParam = urlParams.get("id");
+
+        if (categoryIdParam) {
+          selectedCategoryId = categoryIdParam;
+        }
+
+        try {
+          const categories = await apiService.categories.getAll();
+
+          const categoryList = document.getElementById("category-list");
+
+          categories.forEach((category) => {
+            const categoryItem = document.createElement("div");
+            categoryItem.className = "category-item";
+            categoryItem.dataset.id = category.id;
+            categoryItem.textContent = category.name;
+
+            if (category.id.toString() === selectedCategoryId) {
+              categoryItem.classList.add("active");
+              document.getElementById("category-title").textContent =
+                category.name;
+              document
+                .querySelector('.category-item.active[data-id=""]')
+                .classList.remove("active");
+            }
+
+            categoryList.appendChild(categoryItem);
+          });
+
+          await loadCategoryBooks(selectedCategoryId);
+
+          const categoryItems = document.querySelectorAll(".category-item");
+          categoryItems.forEach((item) => {
+            item.addEventListener("click", async function () {
+              categoryItems.forEach((i) => i.classList.remove("active"));
+
+              this.classList.add("active");
+
+              selectedCategoryId = this.dataset.id;
+
+              if (selectedCategoryId) {
+                const url = new URL(window.location);
+                url.searchParams.set("id", selectedCategoryId);
+                window.history.pushState({}, "", url);
+              } else {
+                const url = new URL(window.location);
+                url.searchParams.delete("id");
+                window.history.pushState({}, "", url);
+              }
+
+              document.getElementById("category-title").textContent =
+                this.textContent === "Tất cả"
+                  ? "Tất cả sách"
+                  : this.textContent;
+
+              await loadCategoryBooks(selectedCategoryId);
+            });
+          });
+        } catch (error) {
+          console.error("Error loading categories:", error);
+        }
+      });
+
+      async function loadCategoryBooks(categoryId) {
+        try {
+          let books;
+
+          if (categoryId) {
+            books = await apiService.categories.getBooks(categoryId);
+          } else {
+            books = await apiService.books.getAll();
+          }
+
+          const booksGrid = document.getElementById("category-books-grid");
+          const noBooks = document.getElementById("no-books");
+
+          if (books && books.length > 0) {
+            booksGrid.style.display = "grid";
+            noBooks.style.display = "none";
+
+            if (typeof renderBooks === "function") {
+              renderBooks(books, booksGrid);
+            } else {
+              renderCategoryBooks(books, booksGrid);
+            }
+          } else {
+            booksGrid.style.display = "none";
+            noBooks.style.display = "block";
+          }
+        } catch (error) {
+          console.error("Error loading books:", error);
+        }
+      }
+
+      function renderCategoryBooks(books, container) {
+        if (!container) return;
+
+        container.innerHTML = "";
+
+        if (!books || books.length === 0) {
+          container.innerHTML = `
+            <div class="no-books-message">
+              <p>Không có sách nào được tìm thấy.</p>
+            </div>
+          `;
+          return;
+        }
+
+        books.forEach((book, index) => {
+          let coverPath = book.coverPath || "/api/placeholder/220/250";
+
+          if (typeof imageUtils !== "undefined") {
+            coverPath = imageUtils.processImagePath(book.coverPath);
+          } else if (
+            coverPath &&
+            !coverPath.startsWith("http") &&
+            !coverPath.startsWith("/")
+          ) {
+            coverPath = "/" + coverPath;
+          }
+
+          const bookCard = document.createElement("div");
+          bookCard.className = "book-card animate-item";
+          bookCard.setAttribute("data-index", index);
+
+          const isNew = book.createdAt
+            ? new Date(book.createdAt) >
+              new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+            : false;
+
+          let badgeHTML = "";
+          if (book.featured) {
+            badgeHTML = `<div class="book-badge featured">Nổi bật</div>`;
+          } else if (isNew) {
+            badgeHTML = `<div class="book-badge new">Mới</div>`;
+          }
+
+          bookCard.innerHTML = `
+            <div class="book-cover">
+              <img src="${coverPath}" 
+                   alt="${book.title}" 
+                   onerror="this.onerror=null; this.src='/api/placeholder/220/250';"
+                   loading="lazy">
+              ${badgeHTML}
+            </div>
+            <div class="book-info">
+              <div class="book-category">${
+                book.category?.name || "Không phân loại"
+              }</div>
+              <h3 class="book-title">${book.title}</h3>
+              <div class="book-author">${
+                book.author || "Không rõ tác giả"
+              }</div>
+              <div class="book-stats">
+                <span><i class="fas fa-star"></i> ${book.rating || "0"}</span>
+                <span><i class="fas fa-download"></i> ${
+                  book.downloadCount || "0"
+                }</span>
+              </div>
+            </div>
+          `;
+
+          bookCard.addEventListener("click", () => {
+            const pagesPath = "";
+            window.location.href = `${pagesPath}book-detail.html?id=${book.id}`;
+          });
+
+          container.appendChild(bookCard);
+        });
+      }
+    </script>
+    <div id="notification-container"></div>
+  </body>
+</html>

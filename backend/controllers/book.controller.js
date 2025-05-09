@@ -2,9 +2,13 @@ const db = require("../models");
 const Book = db.book;
 const Category = db.category;
 const User = db.user;
-const fs = require("fs");
+const fsPromises = require("fs").promises;
+const fs = require("fs"); // Giữ lại fs thông thường cho các hàm đồng bộ
 const path = require("path");
 const logger = require("../utils/logger");
+const pathUtils = require("../utils/path.utils");
+const { handleApiError } = require("../utils/error-handler");
+const validator = require("../utils/validator");
 
 // Tạo sách mới
 exports.create = async (req, res) => {
@@ -137,7 +141,7 @@ exports.findAll = async (req, res) => {
 // Lấy sách đặc trưng (featured)
 exports.findFeatured = async (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || 6;
+    const limit = parseInt(req.query.limit) || 8;
 
     const data = await Book.findAll({
       where: { featured: true },
@@ -406,36 +410,34 @@ exports.delete = async (req, res) => {
       // Xóa file vật lý
       try {
         if (filePath) {
-          const absoluteFilePath = filePath.startsWith("/")
-            ? path.join(__dirname, "..", filePath.substring(1))
-            : path.join(__dirname, "..", filePath);
-
+          const absoluteFilePath = pathUtils.getAbsolutePath(filePath);
+          
           logger.info(`Attempting to delete file: ${absoluteFilePath}`);
-
-          if (fs.existsSync(absoluteFilePath)) {
-            fs.unlinkSync(absoluteFilePath);
+          
+          try {
+            await fsPromises.access(absoluteFilePath);
+            await fsPromises.unlink(absoluteFilePath);
             logger.info(`Deleted file: ${absoluteFilePath}`);
-          } else {
-            logger.warn(`File not found: ${absoluteFilePath}`);
+          } catch (accessErr) {
+            logger.warn(`File not found or cannot be accessed: ${absoluteFilePath}, Error: ${accessErr.message}`);
           }
         }
-
+        
         if (coverPath) {
-          const absoluteCoverPath = coverPath.startsWith("/")
-            ? path.join(__dirname, "..", coverPath.substring(1))
-            : path.join(__dirname, "..", coverPath);
-
+          const absoluteCoverPath = pathUtils.getAbsolutePath(coverPath);
+          
           logger.info(`Attempting to delete cover: ${absoluteCoverPath}`);
-
-          if (fs.existsSync(absoluteCoverPath)) {
-            fs.unlinkSync(absoluteCoverPath);
+          
+          try {
+            await fsPromises.access(absoluteCoverPath);
+            await fsPromises.unlink(absoluteCoverPath);
             logger.info(`Deleted cover: ${absoluteCoverPath}`);
-          } else {
-            logger.warn(`Cover not found: ${absoluteCoverPath}`);
+          } catch (accessErr) {
+            logger.warn(`Cover not found or cannot be accessed: ${absoluteCoverPath}, Error: ${accessErr.message}`);
           }
         }
       } catch (fileError) {
-        logger.error(`Error deleting files: ${fileError}`);
+        logger.error(`Error during file deletion process: ${fileError}`);
         // Không trả về lỗi vì bản ghi đã được xóa
       }
 
@@ -472,12 +474,7 @@ exports.download = async (req, res) => {
     logger.info(`File path from database: ${filePath}`);
 
     // Xử lý đường dẫn tương đối/tuyệt đối
-    let absoluteFilePath;
-    if (filePath.startsWith("/")) {
-      absoluteFilePath = path.join(__dirname, "..", filePath.substring(1));
-    } else {
-      absoluteFilePath = path.join(__dirname, "..", filePath);
-    }
+    const absoluteFilePath = pathUtils.getAbsolutePath(filePath);
 
     // Tăng lượt tải
     await book.update({
@@ -540,22 +537,24 @@ exports.download = async (req, res) => {
     }
 
     // Kiểm tra file tồn tại
-    if (!fs.existsSync(absoluteFilePath)) {
-      logger.error(`File does not exist at path: ${absoluteFilePath}`);
+    try {
+      await fsPromises.access(absoluteFilePath, fs.constants.F_OK);
+      
+      // Gửi file
+      res.download(absoluteFilePath, path.basename(absoluteFilePath), (err) => {
+        if (err) {
+          logger.error(`Error downloading book with id=${id}:`, err);
+          res.status(500).send({
+            message: "Lỗi khi tải xuống sách.",
+          });
+        }
+      });
+    } catch (fileErr) {
+      logger.error(`File does not exist at path: ${absoluteFilePath}, Error: ${fileErr.message}`);
       return res.status(404).send({
         message: "File sách không tồn tại!",
       });
     }
-
-    // Gửi file
-    res.download(absoluteFilePath, path.basename(absoluteFilePath), (err) => {
-      if (err) {
-        logger.error(`Error downloading book with id=${id}:`, err);
-        res.status(500).send({
-          message: "Lỗi khi tải xuống sách.",
-        });
-      }
-    });
   } catch (err) {
     logger.error(`Error downloading book with id=${req.params.id}:`, err);
     res.status(500).send({

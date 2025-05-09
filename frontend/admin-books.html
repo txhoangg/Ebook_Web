@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <base href="/" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý sách - EBook Haven</title>
+    <link rel="stylesheet" href="/assets/css/normalize.css" />
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <link rel="stylesheet" href="/assets/css/responsive.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #4361ee;
+        --primary-dark: #3a56d4;
+        --secondary: #2ec4b6;
+        --secondary-dark: #21a99d;
+        --dark: #2b2d42;
+        --dark-light: #3d405b;
+        --light: #f8f9fa;
+        --light-gray: #e9ecef;
+        --gray: #6c757d;
+        --danger: #ef476f;
+        --warning: #ffd166;
+        --success: #06d6a0;
+        --accent: #ff9f1c;
+      }
+
+      body {
+        background-color: #f0f4f8;
+      }
+
+      .admin-container {
+        display: flex;
+        min-height: calc(100vh - 70px);
+      }
+
+      .admin-sidebar {
+        width: 260px;
+        background: linear-gradient(to bottom, #2c3e50, #1a252f);
+        color: white;
+        padding: 0;
+        position: fixed;
+        height: 100vh;
+        left: 0;
+        top: 0;
+        z-index: 100;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .admin-sidebar-header {
+        padding: 25px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .admin-sidebar-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        letter-spacing: 1px;
+        font-weight: 600;
+        color: white;
+      }
+
+      .admin-sidebar-header h2 i {
+        margin-right: 10px;
+        color: var(--primary);
+      }
+
+      .admin-menu {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .admin-menu-item {
+        margin-bottom: 5px;
+      }
+
+      .admin-menu-item a {
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: all 0.3s;
+        position: relative;
+        font-weight: 500;
+        border-left: 3px solid transparent;
+      }
+
+      .admin-menu-item a i {
+        width: 24px;
+        margin-right: 10px;
+        font-size: 1.1rem;
+        text-align: center;
+      }
+
+      .admin-menu-item a:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .admin-menu-item.active a {
+        background-color: rgba(67, 97, 238, 0.15);
+        color: var(--primary);
+        border-left: 3px solid var(--primary);
+      }
+
+      .admin-content {
+        flex: 1;
+        padding: 30px;
+        margin-left: 260px;
+        transition: all 0.3s ease;
+      }
+
+      .admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
+      }
+
+      .admin-header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+        color: var(--dark);
+        font-weight: 600;
+      }
+
+      .admin-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
+      }
+
+      .admin-filters {
+        display: flex;
+        gap: 15px;
+      }
+
+      .admin-filter {
+        min-width: 180px;
+      }
+
+      .admin-filter label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: var(--gray);
+      }
+
+      .admin-filter select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--light-gray);
+        border-radius: 8px;
+        background-color: var(--light);
+        font-size: 1rem;
+        transition: all 0.3s;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236c757d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 16px;
+      }
+
+      .admin-filter select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        outline: none;
+      }
+
+      .admin-search {
+        display: flex;
+        align-items: center;
+      }
+
+      .admin-search input {
+        padding: 10px 12px;
+        width: 300px;
+        border: 1px solid var(--light-gray);
+        border-radius: 8px 0 0 8px;
+        background-color: var(--light);
+        font-size: 1rem;
+        transition: all 0.3s;
+      }
+
+      .admin-search input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        outline: none;
+        background-color: white;
+      }
+
+      .admin-search button {
+        padding: 10px 20px;
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-dark)
+        );
+        color: white;
+        border: none;
+        border-radius: 0 8px 8px 0;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: 500;
+      }
+
+      .admin-search button:hover {
+        background: linear-gradient(
+          135deg,
+          var(--primary-dark),
+          var(--primary-dark)
+        );
+      }
+
+      .admin-table {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        margin-bottom: 30px;
+      }
+
+      .admin-table table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .admin-table th,
+      .admin-table td {
+        padding: 15px 20px;
+        text-align: left;
+        border-bottom: 1px solid var(--light-gray);
+      }
+
+      .admin-table th {
+        font-weight: 600;
+        color: var(--gray);
+        background-color: rgba(248, 249, 250, 0.5);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .admin-table tbody tr {
+        transition: all 0.3s;
+      }
+
+      .admin-table tbody tr:hover {
+        background-color: rgba(67, 97, 238, 0.03);
+      }
+
+      .admin-table-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .action-btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        border: none;
+        font-weight: 500;
+        transition: all 0.3s;
+      }
+
+      .view-btn {
+        background-color: rgba(67, 97, 238, 0.1);
+        color: var(--primary);
+      }
+
+      .view-btn:hover {
+        background-color: var(--primary);
+        color: white;
+      }
+
+      .edit-btn {
+        background-color: rgba(46, 196, 182, 0.1);
+        color: var(--secondary);
+      }
+
+      .edit-btn:hover {
+        background-color: var(--secondary);
+        color: white;
+      }
+
+      .delete-btn {
+        background-color: rgba(239, 71, 111, 0.1);
+        color: var(--danger);
+      }
+
+      .delete-btn:hover {
+        background-color: var(--danger);
+        color: white;
+      }
+
+      .status {
+        padding: 5px 12px;
+        border-radius: 30px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        display: inline-block;
+      }
+
+      .status.active {
+        background-color: rgba(6, 214, 160, 0.1);
+        color: var(--success);
+      }
+
+      .status.inactive {
+        background-color: rgba(108, 117, 125, 0.1);
+        color: var(--gray);
+      }
+
+      .status.pending {
+        background-color: rgba(255, 209, 102, 0.1);
+        color: var(--warning);
+      }
+
+      .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        gap: 10px;
+      }
+
+      .pagination-item {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        color: var(--dark);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: 500;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      }
+
+      .pagination-item.active {
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-dark)
+        );
+        color: white;
+      }
+
+      .pagination-item:hover:not(.active) {
+        background-color: var(--light);
+        transform: translateY(-2px);
+      }
+
+      .book-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .book-modal.active {
+        display: flex;
+        opacity: 1;
+      }
+
+      .book-modal-content {
+        background-color: white;
+        padding: 30px;
+        border-radius: 15px;
+        max-width: 850px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transform: translateY(20px);
+        transition: transform 0.3s;
+        animation: modalFadeIn 0.3s forwards;
+      }
+
+      @keyframes modalFadeIn {
+        to {
+          transform: translateY(0);
+        }
+      }
+
+      .book-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--light-gray);
+      }
+
+      .book-modal-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: var(--dark);
+        font-weight: 600;
+      }
+
+      .book-modal-close {
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        color: var(--gray);
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+
+      .book-modal-close:hover {
+        background-color: rgba(239, 71, 111, 0.1);
+        color: var(--danger);
+      }
+
+      .book-details {
+        display: flex;
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .book-cover {
+        width: 220px;
+        height: 330px;
+        background-color: var(--light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      }
+
+      .book-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+      }
+
+      .book-cover:hover img {
+        transform: scale(1.05);
+      }
+
+      .book-info {
+        flex: 1;
+      }
+
+      .book-info h3 {
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 1.8rem;
+        color: var(--dark);
+        font-weight: 600;
+      }
+
+      .book-meta {
+        margin-bottom: 25px;
+        background-color: var(--light);
+        padding: 15px 20px;
+        border-radius: 10px;
+      }
+
+      .book-meta p {
+        margin: 10px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--dark-light);
+      }
+
+      .book-meta p strong {
+        color: var(--dark);
+        min-width: 120px;
+        display: inline-block;
+      }
+
+      .book-meta p i {
+        color: var(--primary);
+        width: 16px;
+        text-align: center;
+      }
+
+      .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -10px 15px;
+      }
+
+      .form-group {
+        flex: 1;
+        min-width: 200px;
+        padding: 0 10px;
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: var(--dark);
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--light-gray);
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s;
+        background-color: var(--light);
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        outline: none;
+        background-color: white;
+      }
+
+      .form-group textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid var(--light-gray);
+      }
+
+      .btn {
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1rem;
+        border: none;
+      }
+
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-dark)
+        );
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(
+          135deg,
+          var(--primary-dark),
+          var(--primary-dark)
+        );
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
+      }
+
+      .btn-secondary {
+        background-color: var(--light);
+        color: var(--dark);
+        border: 1px solid var(--light-gray);
+      }
+
+      .btn-secondary:hover {
+        background-color: var(--light-gray);
+        transform: translateY(-2px);
+      }
+
+      .animate-item {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s ease, transform 0.5s ease;
+      }
+
+      .animate-item.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .error-message {
+        background-color: rgba(239, 71, 111, 0.1);
+        color: var(--danger);
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        display: none;
+        align-items: center;
+        font-weight: 500;
+        box-shadow: 0 2px 10px rgba(239, 71, 111, 0.1);
+      }
+
+      .error-message i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+      }
+
+      .error-message.show {
+        display: flex;
+      }
+
+      @media (max-width: 1200px) {
+        .admin-actions {
+          flex-direction: column;
+          gap: 20px;
+        }
+
+        .admin-filters {
+          width: 100%;
+        }
+
+        .admin-search {
+          width: 100%;
+        }
+
+        .admin-search input {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 992px) {
+        .admin-sidebar {
+          width: 80px;
+        }
+
+        .admin-sidebar-header {
+          padding: 20px 10px;
+        }
+
+        .admin-sidebar-header h2 {
+          display: none;
+        }
+
+        .admin-menu-item a {
+          padding: 15px;
+          justify-content: center;
+        }
+
+        .admin-menu-item a i {
+          margin-right: 0;
+          font-size: 1.3rem;
+        }
+
+        .admin-menu-item a span {
+          display: none;
+        }
+
+        .admin-content {
+          margin-left: 80px;
+        }
+
+        .book-details {
+          flex-direction: column;
+        }
+
+        .book-cover {
+          margin: 0 auto 20px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .admin-container {
+          flex-direction: column;
+        }
+
+        .admin-sidebar {
+          width: 100%;
+          height: auto;
+          position: relative;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-sidebar-header {
+          padding: 15px;
+        }
+
+        .admin-sidebar-header h2 {
+          display: block;
+          font-size: 1.3rem;
+        }
+
+        .admin-menu {
+          display: flex;
+          flex-wrap: wrap;
+        }
+
+        .admin-menu-item {
+          flex: 1;
+          margin-bottom: 0;
+        }
+
+        .admin-menu-item a {
+          padding: 12px 10px;
+          flex-direction: column;
+          font-size: 0.8rem;
+          text-align: center;
+        }
+
+        .admin-menu-item a i {
+          margin: 0 0 5px 0;
+        }
+
+        .admin-menu-item a span {
+          display: block;
+        }
+
+        .admin-content {
+          margin-left: 0;
+          padding: 20px;
+        }
+
+        .admin-table {
+          overflow-x: auto;
+        }
+
+        .admin-table-wrapper {
+          width: 100%;
+          overflow-x: auto;
+        }
+
+        .pagination-item {
+          width: 35px;
+          height: 35px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="error-message" id="error-container">
+      <i class="fas fa-exclamation-circle"></i>
+      <span id="error-message">Đã xảy ra lỗi</span>
+    </div>
+
+    <div class="admin-container">
+      <div class="admin-sidebar">
+        <div class="admin-sidebar-header">
+          <h2><i class="fas fa-cogs"></i> Admin Panel</h2>
+        </div>
+        <ul class="admin-menu">
+          <li class="admin-menu-item">
+            <a href="/admin-dashboard.html">
+              <i class="fas fa-chart-line"></i>
+              <span>Tổng quan</span>
+            </a>
+          </li>
+          <li class="admin-menu-item active">
+            <a href="/admin-books.html">
+              <i class="fas fa-book"></i>
+              <span>Quản lý sách</span>
+            </a>
+          </li>
+          <li class="admin-menu-item">
+            <a href="/admin-users.html">
+              <i class="fas fa-users"></i>
+              <span>Quản lý người dùng</span>
+            </a>
+          </li>
+          <li class="admin-menu-item">
+            <a href="/admin-categories.html">
+              <i class="fas fa-tags"></i>
+              <span>Quản lý danh mục</span>
+            </a>
+          </li>
+          <li class="admin-menu-item">
+            <a href="/index.html">
+              <i class="fas fa-home"></i>
+              <span>Trang chủ</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="admin-content">
+        <div class="admin-header animate-item">
+          <h1>Quản lý sách</h1>
+        </div>
+
+        <div class="admin-actions animate-item">
+          <div class="admin-filters">
+            <div class="admin-filter">
+              <label for="category-filter">Danh mục</label>
+              <select id="category-filter">
+                <option value="">Tất cả danh mục</option>
+              </select>
+            </div>
+            <div class="admin-filter">
+              <label for="status-filter">Trạng thái</label>
+              <select id="status-filter">
+                <option value="">Tất cả trạng thái</option>
+                <option value="active">Hoạt động</option>
+                <option value="inactive">Không hoạt động</option>
+                <option value="pending">Chờ duyệt</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="admin-search">
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Tìm theo tiêu đề hoặc tác giả"
+            />
+            <button id="search-btn">Tìm kiếm</button>
+          </div>
+        </div>
+
+        <div class="admin-table animate-item">
+          <div class="admin-table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Tiêu đề</th>
+                  <th>Tác giả</th>
+                  <th>Danh mục</th>
+                  <th>Người đăng</th>
+                  <th>Lượt tải</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="books-table">
+                <tr>
+                  <td colspan="8" style="text-align: center">
+                    Đang tải dữ liệu...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </div>
+
+    <div class="book-modal" id="book-modal">
+      <div class="book-modal-content">
+        <div class="book-modal-header">
+          <h2 id="modal-title">Chi tiết sách</h2>
+          <button class="book-modal-close">&times;</button>
+        </div>
+        <div class="book-details" id="book-details"></div>
+        <div class="form-actions">
+          <button class="btn btn-primary" id="save-book-btn">
+            <i class="fas fa-save"></i> Lưu thay đổi
+          </button>
+          <button class="btn btn-secondary" id="cancel-book-btn">
+            <i class="fas fa-times"></i> Hủy
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="/assets/js/api.service.js"></script>
+    <script src="/assets/js/helper.js"></script>
+    <script src="/assets/js/main.js"></script>
+    <script>
+      let currentPage = 1;
+      let pageSize = 10;
+      let totalPages = 1;
+      let categories = [];
+      let currentBook = null;
+
+      function initAnimations() {
+        const animateItems = document.querySelectorAll(".animate-item");
+
+        if (animateItems.length > 0) {
+          animateItems.forEach((item, index) => {
+            setTimeout(() => {
+              item.classList.add("show");
+            }, 100 * index);
+          });
+        }
+      }
+
+      function showError(message) {
+        const errorContainer = document.getElementById("error-container");
+        const errorMessage = document.getElementById("error-message");
+
+        errorMessage.textContent = message;
+        errorContainer.classList.add("show");
+      }
+
+      document.addEventListener("DOMContentLoaded", async function () {
+        initAnimations();
+
+        if (!apiService.auth.isAuthenticated()) {
+          showError("Bạn cần đăng nhập để truy cập trang quản trị!");
+          setTimeout(() => {
+            window.location.href = "/index.html";
+          }, 2000);
+          return;
+        }
+
+        const user = apiService.auth.getCurrentUser();
+        if (user.role !== "admin") {
+          showError("Bạn không có quyền truy cập trang quản trị!");
+          setTimeout(() => {
+            window.location.href = "/index.html";
+          }, 2000);
+          return;
+        }
+
+        try {
+          categories = await apiService.categories.getAll();
+
+          const categoryFilter = document.getElementById("category-filter");
+          categories.forEach((category) => {
+            const option = document.createElement("option");
+            option.value = category.id;
+            option.textContent = category.name;
+            categoryFilter.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Error loading categories:", error);
+          showError("Không thể tải danh mục sách");
+        }
+
+        loadBooks();
+
+        document
+          .getElementById("search-btn")
+          .addEventListener("click", function () {
+            currentPage = 1;
+            loadBooks();
+          });
+
+        document
+          .getElementById("search-input")
+          .addEventListener("keypress", function (e) {
+            if (e.key === "Enter") {
+              currentPage = 1;
+              loadBooks();
+            }
+          });
+
+        document
+          .getElementById("category-filter")
+          .addEventListener("change", function () {
+            currentPage = 1;
+            loadBooks();
+          });
+
+        document
+          .getElementById("status-filter")
+          .addEventListener("change", function () {
+            currentPage = 1;
+            loadBooks();
+          });
+
+        document
+          .querySelector(".book-modal-close")
+          .addEventListener("click", closeModal);
+        document
+          .getElementById("cancel-book-btn")
+          .addEventListener("click", closeModal);
+
+        document
+          .getElementById("save-book-btn")
+          .addEventListener("click", saveBookChanges);
+      });
+
+      function processCoverPath(coverPath) {
+        if (!coverPath) {
+          return "/api/placeholder/200/300";
+        }
+
+        console.log("Original cover path:", coverPath);
+
+        let processedPath = coverPath;
+
+        if (coverPath.startsWith("uploads/")) {
+          processedPath = `/${coverPath}`;
+        } else if (coverPath.includes("C:") || coverPath.includes("\\")) {
+          const filename = coverPath.split(/[\\\/]/).pop();
+          processedPath = `/uploads/covers/${filename}`;
+        }
+
+        console.log("Processed cover path:", processedPath);
+        return processedPath;
+      }
+
+      async function loadBooks() {
+        try {
+          const title = document.getElementById("search-input").value;
+          const categoryId = document.getElementById("category-filter").value;
+          const status = document.getElementById("status-filter").value;
+
+          const params = {
+            page: currentPage,
+            limit: pageSize,
+            sort: "createdAt:desc",
+          };
+
+          if (title) params.title = title;
+          if (categoryId) params.category = categoryId;
+          if (status) params.status = status;
+
+          const response = await apiService.admin.getAllBooks(params);
+
+          if (!response || !response.books) {
+            showError("Lỗi khi tải danh sách sách");
+            return;
+          }
+
+          renderBooks(response.books);
+
+          totalPages = response.totalPages || 1;
+          renderPagination();
+        } catch (error) {
+          console.error("Error loading books:", error);
+          showError("Lỗi khi tải danh sách sách");
+        }
+      }
+
+      function renderBooks(books) {
+        const tableBody = document.getElementById("books-table");
+
+        if (!books || books.length === 0) {
+          tableBody.innerHTML =
+            '<tr><td colspan="8" style="text-align: center">Không tìm thấy sách</td></tr>';
+          return;
+        }
+
+        tableBody.innerHTML = "";
+
+        books.forEach((book) => {
+          const row = document.createElement("tr");
+
+          row.innerHTML = `
+            <td>${book.id}</td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 40px; height: 50px; border-radius: 4px; overflow: hidden; background: var(--light);">
+                  <img src="${
+                    book.coverPath || "/api/placeholder/40/50"
+                  }" alt="${book.title}" 
+                    style="width: 100%; height: 100%; object-fit: cover;"
+                    onerror="this.src='/api/placeholder/40/50'">
+                </div>
+                <span style="font-weight: 500;">${book.title}</span>
+              </div>
+            </td>
+            <td>${book.author}</td>
+            <td>${book.category ? book.category.name : "Không có"}</td>
+            <td>${book.uploader ? book.uploader.username : "Không rõ"}</td>
+            <td>${book.downloadCount || 0}</td>
+            <td><span class="status ${book.status}">${book.status}</span></td>
+            <td class="admin-table-actions">
+              <button class="action-btn view-btn" data-id="${
+                book.id
+              }"><i class="fas fa-eye"></i></button>
+              <button class="action-btn edit-btn" data-id="${
+                book.id
+              }"><i class="fas fa-edit"></i></button>
+              <button class="action-btn delete-btn" data-id="${
+                book.id
+              }"><i class="fas fa-trash"></i></button>
+            </td>
+          `;
+
+          tableBody.appendChild(row);
+        });
+
+        document.querySelectorAll(".view-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const bookId = this.getAttribute("data-id");
+            viewBook(bookId);
+          });
+        });
+
+        document.querySelectorAll(".edit-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const bookId = this.getAttribute("data-id");
+            editBook(bookId);
+          });
+        });
+
+        document.querySelectorAll(".delete-btn").forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const bookId = this.getAttribute("data-id");
+            deleteBook(bookId);
+          });
+        });
+      }
+
+      function renderPagination() {
+        const pagination = document.getElementById("pagination");
+        pagination.innerHTML = "";
+
+        if (totalPages <= 1) return;
+
+        const prevBtn = document.createElement("div");
+        prevBtn.className = "pagination-item";
+        prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        prevBtn.addEventListener("click", function () {
+          if (currentPage > 1) {
+            currentPage--;
+            loadBooks();
+          }
+        });
+        pagination.appendChild(prevBtn);
+
+        const maxPages = 5;
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + maxPages - 1);
+
+        if (endPage - startPage < maxPages - 1) {
+          startPage = Math.max(1, endPage - maxPages + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+          const pageBtn = document.createElement("div");
+          pageBtn.className =
+            i === currentPage ? "pagination-item active" : "pagination-item";
+          pageBtn.textContent = i;
+          pageBtn.addEventListener("click", function () {
+            currentPage = i;
+            loadBooks();
+          });
+          pagination.appendChild(pageBtn);
+        }
+
+        const nextBtn = document.createElement("div");
+        nextBtn.className = "pagination-item";
+        nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        nextBtn.addEventListener("click", function () {
+          if (currentPage < totalPages) {
+            currentPage++;
+            loadBooks();
+          }
+        });
+        pagination.appendChild(nextBtn);
+      }
+
+      async function viewBook(bookId) {
+        try {
+          const book = await apiService.books.getById(bookId);
+
+          if (!book) {
+            alert("Không tìm thấy thông tin sách!");
+            return;
+          }
+
+          const bookDetails = document.getElementById("book-details");
+
+          const coverPath = processCoverPath(book.coverPath);
+
+          bookDetails.innerHTML = `
+            <div class="book-cover">
+              <img src="${coverPath}" alt="${book.title}" 
+                   onerror="this.onerror=null; this.src='/api/placeholder/200/300';">
+            </div>
+            <div class="book-info">
+              <h3>${book.title}</h3>
+              <div class="book-meta">
+                <p><i class="fas fa-user-edit"></i> <strong>Tác giả:</strong> ${
+                  book.author
+                }</p>
+                <p><i class="fas fa-tags"></i> <strong>Danh mục:</strong> ${
+                  book.category ? book.category.name : "Không có"
+                }</p>
+                <p><i class="fas fa-user"></i> <strong>Người đăng:</strong> ${
+                  book.uploader ? book.uploader.username : "Không rõ"
+                }</p>
+                <p><i class="fas fa-calendar-alt"></i> <strong>Ngày đăng:</strong> ${new Date(
+                  book.createdAt
+                ).toLocaleDateString()}</p>
+                <p><i class="fas fa-download"></i> <strong>Lượt tải:</strong> ${
+                  book.downloadCount || 0
+                }</p>
+                <p><i class="fas fa-eye"></i> <strong>Lượt xem:</strong> ${
+                  book.viewCount || 0
+                }</p>
+                <p><i class="fas fa-star"></i> <strong>Đánh giá:</strong> ${
+                  book.rating || 0
+                }/5 (${book.ratingCount || 0} đánh giá)</p>
+                <p><i class="fas fa-check-circle"></i> <strong>Trạng thái:</strong> <span class="status ${
+                  book.status
+                }">${book.status}</span></p>
+              </div>
+              <div>
+                <h4 style="font-size: 1.2rem; margin-bottom: 10px; color: var(--dark);">Mô tả:</h4>
+                <p style="line-height: 1.6; color: var(--dark-light);">${
+                  book.description || "Không có mô tả."
+                }</p>
+              </div>
+            </div>
+          `;
+
+          document.getElementById("modal-title").textContent = "Chi tiết sách";
+          document.getElementById("save-book-btn").style.display = "none";
+          document.getElementById("book-modal").classList.add("active");
+        } catch (error) {
+          console.error("Error viewing book:", error);
+          alert("Lỗi khi tải thông tin sách!");
+        }
+      }
+
+      async function editBook(bookId) {
+        try {
+          const book = await apiService.books.getById(bookId);
+
+          if (!book) {
+            alert("Không tìm thấy thông tin sách!");
+            return;
+          }
+
+          currentBook = book;
+
+          const coverPath = processCoverPath(book.coverPath);
+
+          const bookDetails = document.getElementById("book-details");
+
+          bookDetails.innerHTML = `
+            <div class="book-cover">
+              <img src="${coverPath}" alt="${book.title}"
+                   onerror="this.onerror=null; this.src='/api/placeholder/200/300';">
+            </div>
+            <div class="book-info">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="edit-title">Tiêu đề</label>
+                  <input type="text" id="edit-title" value="${book.title}">
+                </div>
+                <div class="form-group">
+                  <label for="edit-author">Tác giả</label>
+                  <input type="text" id="edit-author" value="${book.author}">
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="edit-category">Danh mục</label>
+                  <select id="edit-category">
+                    ${categories
+                      .map(
+                        (category) => `
+                      <option value="${category.id}" ${
+                          book.categoryId == category.id ? "selected" : ""
+                        }>
+                        ${category.name}
+                      </option>
+                    `
+                      )
+                      .join("")}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="edit-status">Trạng thái</label>
+                  <select id="edit-status">
+                    <option value="active" ${
+                      book.status === "active" ? "selected" : ""
+                    }>Hoạt động</option>
+                    <option value="inactive" ${
+                      book.status === "inactive" ? "selected" : ""
+                    }>Không hoạt động</option>
+                    <option value="pending" ${
+                      book.status === "pending" ? "selected" : ""
+                    }>Chờ duyệt</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="edit-language">Ngôn ngữ</label>
+                  <input type="text" id="edit-language" value="${
+                    book.language || ""
+                  }">
+                </div>
+                <div class="form-group">
+                  <label for="edit-publishYear">Năm xuất bản</label>
+                  <input type="number" id="edit-publishYear" value="${
+                    book.publishYear || ""
+                  }">
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="edit-pageCount">Số trang</label>
+                  <input type="number" id="edit-pageCount" value="${
+                    book.pageCount || ""
+                  }">
+                </div>
+                <div class="form-group">
+                  <label for="edit-isbn">ISBN</label>
+                  <input type="text" id="edit-isbn" value="${book.isbn || ""}">
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="edit-description">Mô tả</label>
+                <textarea id="edit-description" rows="5">${
+                  book.description || ""
+                }</textarea>
+              </div>
+              
+              <div class="form-group">
+                <label for="edit-featured">Nổi bật</label>
+                <select id="edit-featured">
+                  <option value="true" ${
+                    book.featured ? "selected" : ""
+                  }>Có</option>
+                  <option value="false" ${
+                    !book.featured ? "selected" : ""
+                  }>Không</option>
+                </select>
+              </div>
+            </div>
+          `;
+
+          document.getElementById("modal-title").textContent = "Chỉnh sửa sách";
+          document.getElementById("save-book-btn").style.display =
+            "inline-block";
+          document.getElementById("book-modal").classList.add("active");
+        } catch (error) {
+          console.error("Error editing book:", error);
+          alert("Lỗi khi tải thông tin sách!");
+        }
+      }
+
+      async function saveBookChanges() {
+        if (!currentBook) return;
+
+        try {
+          const updatedData = {
+            title: document.getElementById("edit-title").value,
+            author: document.getElementById("edit-author").value,
+            categoryId: document.getElementById("edit-category").value,
+            status: document.getElementById("edit-status").value,
+            language: document.getElementById("edit-language").value,
+            publishYear:
+              document.getElementById("edit-publishYear").value || null,
+            pageCount: document.getElementById("edit-pageCount").value || null,
+            isbn: document.getElementById("edit-isbn").value || null,
+            description: document.getElementById("edit-description").value,
+            featured: document.getElementById("edit-featured").value === "true",
+          };
+
+          console.log("Saving book changes:", updatedData);
+
+          await apiService.admin.updateBookStatus(
+            currentBook.id,
+            updatedData.status,
+            updatedData.featured
+          );
+
+          await apiService.books.update(currentBook.id, updatedData);
+
+          alert("Cập nhật thông tin sách thành công!");
+          closeModal();
+          loadBooks();
+        } catch (error) {
+          console.error("Error saving book changes:", error);
+          alert("Lỗi khi cập nhật thông tin sách: " + error.message);
+        }
+      }
+
+      async function deleteBook(bookId) {
+        if (!confirm("Bạn có chắc chắn muốn xóa sách này?")) return;
+
+        try {
+          console.log("Deleting book with ID:", bookId);
+          const response = await apiService.books.delete(bookId);
+          console.log("Delete response:", response);
+
+          alert("Xóa sách thành công!");
+          loadBooks();
+        } catch (error) {
+          console.error("Error deleting book:", error);
+          alert("Lỗi khi xóa sách: " + error.message);
+        }
+      }
+
+      function closeModal() {
+        document.getElementById("book-modal").classList.remove("active");
+        currentBook = null;
+      }
+    </script>
+    <div id="notification-container"></div>
+  </body>
+</html>

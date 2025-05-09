@@ -1,0 +1,77 @@
+/* dropdown.css - CSS đặc biệt cho dropdown menu với độ ưu tiên cao */
+.nav-menu .user-menu-item {
+  position: relative !important;
+}
+
+.nav-menu .user-menu-item .user-menu {
+  position: relative !important;
+  display: inline-block !important;
+}
+
+.nav-menu .user-menu-item .user-menu .user-menu-toggle {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  color: var(--dark) !important;
+  font-weight: 500 !important;
+}
+
+.nav-menu .user-menu-item .user-menu .user-avatar {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50% !important;
+  background-color: var(--primary) !important;
+  color: white !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: bold !important;
+  margin-right: 8px !important;
+}
+
+.nav-menu .user-menu-item .user-menu .user-dropdown {
+  position: absolute !important;
+  top: 100% !important;
+  right: 0 !important;
+  left: auto !important;
+  background-color: white !important;
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow-lg) !important;
+  min-width: 200px !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: translateY(10px) !important;
+  transition: all 0.3s ease !important;
+  z-index: 1000 !important;
+  overflow: visible !important;
+  margin-top: 5px !important;
+  width: 220px !important;
+}
+
+.nav-menu .user-menu-item .user-menu:hover .user-dropdown {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) !important;
+  display: block !important;
+}
+
+.nav-menu .user-menu-item .user-menu .user-dropdown a {
+  padding: 12px 20px !important;
+  display: block !important;
+  color: var(--dark) !important;
+  transition: all 0.2s ease !important;
+  border-bottom: 1px solid var(--light-gray) !important;
+  text-decoration: none !important;
+  text-align: left !important;
+  white-space: nowrap !important;
+}
+
+.nav-menu .user-menu-item .user-menu .user-dropdown a:hover {
+  background-color: var(--light) !important;
+  color: var(--primary) !important;
+}
+
+.nav-menu .user-menu-item .user-menu .user-dropdown a:last-child {
+  border-bottom: none !important;
+}

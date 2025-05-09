@@ -14,8 +14,8 @@ module.exports = (app) => {
   // Lấy sách theo ID
   router.get("/:id", books.findOne);
 
-  // Tạo sách mới (yêu cầu đăng nhập)
-  router.post("/", [authJwt.verifyToken, upload.uploadFiles], books.create);
+  // Tạo sách mới (yêu cầu đăng nhập và quyền admin/moderator)
+  router.post("/", [authJwt.verifyToken, authJwt.isAdminOrModerator, upload.uploadFiles], books.create);
 
   // Cập nhật sách (yêu cầu đăng nhập + quyền)
   router.put("/:id", [authJwt.verifyToken, upload.uploadFiles], books.update);

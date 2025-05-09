@@ -13,6 +13,7 @@ verifyToken = (req, res, next) => {
   if (!token) {
     return res.status(403).send({
       message: "Không tìm thấy token!",
+      success: false,
     });
   }
 
@@ -26,7 +27,8 @@ verifyToken = (req, res, next) => {
     if (err) {
       logger.error("Error verifying JWT token:", err);
       return res.status(401).send({
-        message: "Không có quyền truy cập!",
+        message: "Token không hợp lệ hoặc đã hết hạn!",
+        success: false,
       });
     }
 
@@ -45,6 +47,7 @@ isAdmin = async (req, res, next) => {
     if (!user) {
       return res.status(404).send({
         message: "Không tìm thấy người dùng!",
+        success: false,
       });
     }
 
@@ -55,11 +58,43 @@ isAdmin = async (req, res, next) => {
 
     res.status(403).send({
       message: "Yêu cầu vai trò Admin!",
+      success: false,
     });
   } catch (err) {
     logger.error("Error checking admin role:", err);
     res.status(500).send({
       message: "Lỗi khi kiểm tra vai trò Admin!",
+      success: false,
+    });
+  }
+};
+
+// Kiểm tra vai trò Admin hoặc Moderator
+isAdminOrModerator = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.userId);
+
+    if (!user) {
+      return res.status(404).send({
+        message: "Không tìm thấy người dùng!",
+        success: false,
+      });
+    }
+
+    if (user.role === "admin" || user.role === "moderator") {
+      next();
+      return;
+    }
+
+    res.status(403).send({
+      message: "Yêu cầu vai trò Admin hoặc Moderator!",
+      success: false,
+    });
+  } catch (err) {
+    logger.error("Error checking admin/moderator role:", err);
+    res.status(500).send({
+      message: "Lỗi khi kiểm tra vai trò Admin/Moderator!",
+      success: false,
     });
   }
 };
@@ -72,6 +107,7 @@ isVerified = async (req, res, next) => {
     if (!user) {
       return res.status(404).send({
         message: "Không tìm thấy người dùng!",
+        success: false,
       });
     }
 
@@ -82,11 +118,13 @@ isVerified = async (req, res, next) => {
 
     res.status(403).send({
       message: "Tài khoản chưa được xác minh!",
+      success: false,
     });
   } catch (err) {
     logger.error("Error checking user verification:", err);
     res.status(500).send({
       message: "Lỗi khi kiểm tra xác minh tài khoản!",
+      success: false,
     });
   }
 };
@@ -94,6 +132,7 @@ isVerified = async (req, res, next) => {
 const authJwt = {
   verifyToken,
   isAdmin,
+  isAdminOrModerator,
   isVerified,
 };
 

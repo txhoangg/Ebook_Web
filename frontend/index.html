@@ -1,45 +1,88 @@
 <!DOCTYPE html>
 <html lang="vi">
   <head>
+    <base href="/" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>EBook Haven - Thư Viện Sách Điện Tử</title>
-    <link rel="stylesheet" href="assets/css/normalize.css" />
-    <link rel="stylesheet" href="assets/css/main.css" />
-    <link rel="stylesheet" href="assets/css/responsive.css" />
+    <link rel="stylesheet" href="/assets/css/normalize.css" />
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <link rel="stylesheet" href="/assets/css/responsive.css" />
+    <link rel="stylesheet" href="/assets/css/dropdown.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
+      :root {
+        --primary: #4361ee;
+        --primary-dark: #3a56d4;
+        --secondary: #2ec4b6;
+        --secondary-dark: #21a99d;
+        --dark: #2b2d42;
+        --dark-light: #3d405b;
+        --light: #f8f9fa;
+        --light-gray: #e9ecef;
+        --gray: #6c757d;
+        --danger: #ef476f;
+        --warning: #ffd166;
+        --success: #06d6a0;
+        --accent: #ff9f1c;
+
+        --font-main: "Poppins", sans-serif;
+
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+        --shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 15px 30px rgba(0, 0, 0, 0.1);
+        --shadow-hover: 0 10px 25px rgba(67, 97, 238, 0.1);
+
+        --radius-sm: 8px;
+        --radius: 12px;
+        --radius-lg: 20px;
+
+        --transition: all 0.3s ease;
+      }
+
+      body {
+        font-family: var(--font-main);
+        background-color: #f8fafc;
+        color: var(--dark);
+        line-height: 1.6;
+        overflow-x: hidden; /* Đảm bảo không có scrollbar ngang */
+      }
+
       .category-grid {
         display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 12px;
-        margin-top: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 20px;
+        margin-top: 25px;
       }
 
       .category-item {
-        background-color: #f8f9fa;
-        border-radius: 8px;
-        padding: 12px;
+        background-color: white;
+        border-radius: var(--radius);
+        padding: 20px 15px;
         text-align: center;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        box-shadow: var(--shadow-sm);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        min-height: 90px;
+        min-height: 110px;
         cursor: pointer;
         position: relative;
         overflow: hidden;
       }
 
       .category-item:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
       }
 
       .category-item:before {
@@ -47,9 +90,13 @@
         position: absolute;
         top: 0;
         left: 0;
-        width: 4px;
+        width: 5px;
         height: 100%;
-        background: var(--primary, #4361ee);
+        background: linear-gradient(
+          to bottom,
+          var(--primary),
+          var(--secondary)
+        );
         opacity: 0;
         transition: opacity 0.3s;
       }
@@ -59,101 +106,664 @@
       }
 
       .category-icon {
-        font-size: 22px;
-        margin-bottom: 8px;
-        color: var(--primary, #4361ee);
+        font-size: 28px;
+        margin-bottom: 12px;
+        color: var(--primary);
+        height: 60px;
+        width: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background-color: rgba(67, 97, 238, 0.08);
+        transition: all 0.3s ease;
+      }
+
+      .category-item:hover .category-icon {
+        background-color: rgba(67, 97, 238, 0.12);
+        transform: scale(1.1);
       }
 
       .category-name {
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 600;
         margin: 0;
-        line-height: 1.2;
+        line-height: 1.3;
       }
 
       .category-count {
-        font-size: 12px;
-        color: var(--gray, #6c757d);
+        font-size: 13px;
+        color: var(--gray);
         margin-top: 5px;
+        display: inline-block;
+        padding: 3px 8px;
+        background-color: var(--light);
+        border-radius: 12px;
       }
 
-      @media (max-width: 1200px) {
-        .category-grid {
-          grid-template-columns: repeat(5, 1fr);
-        }
-      }
-
-      @media (max-width: 992px) {
-        .category-grid {
-          grid-template-columns: repeat(4, 1fr);
-        }
-      }
-
-      @media (max-width: 768px) {
-        .category-grid {
-          grid-template-columns: repeat(3, 1fr);
-        }
-      }
-
-      @media (max-width: 576px) {
-        .category-grid {
-          grid-template-columns: repeat(2, 1fr);
-        }
-
-        .category-item {
-          padding: 10px;
-          min-height: 80px;
-        }
-
-        .category-icon {
-          font-size: 20px;
-        }
-      }
-
+      /* CSS đã sửa cho phần hero banner */
       .hero {
-        background-image: url("assets/images/library-background.png");
+        background-image: linear-gradient(
+            rgba(0, 0, 0, 0.7),
+            rgba(0, 0, 0, 0.7)
+          ),
+          url("assets/images/library-background.png");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         position: relative;
-        padding: 80px 0;
+        padding: 100px 0;
         color: #fff;
-        border-radius: 0;
-        overflow: hidden;
+        border-radius: 0 !important; /* Loại bỏ bo góc */
+        -webkit-border-radius: 0 !important;
+        -moz-border-radius: 0 !important;
+        -ms-border-radius: 0 !important;
+        overflow: visible !important; /* Thay đổi từ hidden để không cắt nội dung */
+        margin-bottom: 50px;
+        box-shadow: none !important;
+        -webkit-box-shadow: none !important;
+        -moz-box-shadow: none !important;
+        background-clip: border-box !important;
       }
 
+      /* Xóa bỏ hiệu ứng bóng đổ */
+      .hero::after,
       .hero::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.65);
-        z-index: 1;
-        border-radius: 0;
+        display: none !important;
+        content: none !important;
       }
 
-      .hero .container {
-        position: relative;
-        z-index: 2;
+      /* Ảnh hưởng đến tất cả phần tử con của .hero để đảm bảo không có bo góc */
+      .hero * {
+        border-radius: 0 !important;
+        -webkit-border-radius: 0 !important;
+        -moz-border-radius: 0 !important;
+        -ms-border-radius: 0 !important;
       }
 
-      .hero h1,
+      /* Phần tử cha chứa .hero */
+      #home-page {
+        overflow: visible;
+        border-radius: 0 !important;
+      }
+
+      .hero h1 {
+        font-size: 3.3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        line-height: 1.2;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        animation: fadeInDown 1s;
+      }
+
       .hero p {
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        font-size: 1.35rem;
+        margin-bottom: 30px;
+        opacity: 0.9;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        animation: fadeInUp 1s 0.3s forwards;
+        opacity: 0;
+      }
+
+      .hero .btn {
+        padding: 14px 30px;
+        font-size: 1.05rem;
+        font-weight: 500;
+        animation: fadeInUp 1s 0.6s forwards;
+        opacity: 0;
+        transition: transform 0.3s, box-shadow 0.3s;
       }
 
       .hero .btn-outline {
         color: white !important;
         border: 2px solid white;
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: rgba(255, 255, 255, 0.12);
         transition: all 0.3s ease;
+        font-weight: 500;
       }
 
       .hero .btn-outline:hover {
-        background-color: rgba(255, 255, 255, 0.3);
-        color: white !important;
+        background-color: rgba(255, 255, 255, 0.25);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .book-card {
+        background-color: white;
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        cursor: pointer;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+      }
+
+      .book-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .book-cover {
+        height: 280px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .book-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+      }
+
+      .book-card:hover .book-cover img {
+        transform: scale(1.08);
+      }
+
+      .book-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 5px 12px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-radius: 20px;
+        z-index: 2;
+      }
+
+      .book-badge.featured {
+        background-color: rgba(255, 159, 28, 0.9);
+        color: white;
+      }
+
+      .book-badge.new {
+        background-color: rgba(46, 196, 182, 0.9);
+        color: white;
+      }
+
+      .book-info {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        border-top: 1px solid rgba(0, 0, 0, 0.03);
+      }
+
+      .book-category {
+        font-size: 0.75rem;
+        color: var(--primary);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+        font-weight: 600;
+      }
+
+      .book-title {
+        font-size: 1.15rem;
+        margin-bottom: 8px;
+        font-weight: 600;
+        line-height: 1.4;
+        color: var(--dark);
+        transition: color 0.3s;
+      }
+
+      .book-card:hover .book-title {
+        color: var(--primary);
+      }
+
+      .book-author {
+        font-size: 0.95rem;
+        color: var(--gray);
+        margin-bottom: 15px;
+      }
+
+      .book-stats {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+        padding-top: 15px;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        font-size: 0.85rem;
+        color: var(--gray);
+      }
+
+      .book-stats span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .book-stats i {
+        font-size: 0.95rem;
+        color: var(--primary);
+      }
+
+      .how-it-works {
+        background-color: white;
+        padding: 80px 0;
+        margin: 80px 0;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .how-it-works::before {
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(
+          circle,
+          rgba(67, 97, 238, 0.1) 0%,
+          transparent 70%
+        );
+        top: -150px;
+        left: -150px;
+      }
+
+      .how-it-works::after {
+        content: "";
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(
+          circle,
+          rgba(46, 196, 182, 0.1) 0%,
+          transparent 70%
+        );
+        bottom: -150px;
+        right: -150px;
+      }
+
+      .steps-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 35px;
+        max-width: 1100px;
+        margin: 40px auto 0;
+        position: relative;
+        z-index: 2;
+      }
+
+      .step {
+        flex: 1;
+        padding: 35px 25px;
+        text-align: center;
+        background-color: var(--light);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        position: relative;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+      }
+
+      .step:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .step-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(
+          135deg,
+          var(--primary),
+          var(--primary-dark)
+        );
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 1.8rem;
+        color: white;
+        font-weight: bold;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .step-icon::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          to bottom right,
+          transparent 50%,
+          rgba(255, 255, 255, 0.15) 50%
+        );
+        transition: transform 0.3s;
+      }
+
+      .step:hover .step-icon::after {
+        transform: translateY(-100%);
+      }
+
+      .step h3 {
+        margin-bottom: 15px;
+        color: var(--dark);
+        font-size: 1.4rem;
+        font-weight: 600;
+      }
+
+      .step p {
+        color: var(--gray);
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+
+      .step:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        top: 95px;
+        right: -25px;
+        width: 15px;
+        height: 15px;
+        border-top: 3px solid var(--primary);
+        border-right: 3px solid var(--primary);
+        transform: rotate(45deg);
+        z-index: 3;
+      }
+
+      .section-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 20px;
+        position: relative;
+        display: inline-block;
+      }
+
+      .section-title::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -10px;
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        border-radius: 2px;
+      }
+
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-fadeIn {
+        animation: fadeInUp 0.7s ease forwards;
+      }
+
+      .animate-slideUp {
+        animation: fadeInUp 0.7s ease forwards;
+      }
+
+      .featured-books,
+      .new-arrivals {
+        margin-bottom: 70px;
+      }
+
+      .book-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+      }
+
+      .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+      }
+
+      .logo span {
+        color: var(--primary);
+        margin-left: 3px;
+      }
+
+      .search-bar {
+        flex-grow: 1;
+        margin: 0 30px;
+        position: relative;
+        max-width: 500px;
+      }
+
+      .search-bar input {
+        width: 100%;
+        padding: 14px 20px;
+        border-radius: 30px;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        font-size: 1rem;
+        outline: none;
+        transition: var(--transition);
+        box-shadow: var(--shadow-sm);
+        background-color: var(--light);
+      }
+
+      .search-bar input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
+        background-color: white;
+      }
+
+      .search-bar button {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--primary);
+        cursor: pointer;
+        font-size: 1.1rem;
+        transition: var(--transition);
+      }
+
+      .search-bar button:hover {
+        color: var(--primary-dark);
+      }
+
+      .nav-menu {
+        display: flex;
+        list-style: none;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+      }
+
+      .nav-menu li {
+        margin-left: 25px;
+      }
+
+      .nav-menu a {
+        color: var(--dark);
+        font-weight: 500;
+        transition: var(--transition);
+        padding: 5px 0;
+        position: relative;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .nav-menu a:before {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: 0;
+        left: 0;
+        background-color: var(--primary);
+        transition: width 0.3s ease;
+      }
+
+      .nav-menu a:hover {
+        color: var(--primary);
+      }
+
+      .nav-menu a:hover:before {
+        width: 100%;
+      }
+
+      footer {
+        background-color: var(--dark);
+        color: white;
+        padding: 70px 0 20px;
+        margin-top: 60px;
+      }
+
+      .footer-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 40px;
+      }
+
+      .footer-col {
+        flex: 1;
+        min-width: 200px;
+        margin-bottom: 30px;
+      }
+
+      .footer-col h3 {
+        margin-bottom: 25px;
+        position: relative;
+        padding-bottom: 10px;
+        font-size: 1.3rem;
+        color: white;
+      }
+
+      .footer-col h3::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 40px;
+        height: 3px;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+      }
+
+      .footer-col ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .footer-col ul li {
+        margin-bottom: 12px;
+      }
+
+      .footer-col ul li a {
+        color: rgba(255, 255, 255, 0.7);
+        transition: var(--transition);
+        font-size: 0.95rem;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .footer-col ul li a:hover {
+        color: white;
+        transform: translateX(5px);
+      }
+
+      .social-icons {
+        display: flex;
+        margin-top: 25px;
+        gap: 12px;
+      }
+
+      .social-icons a {
+        width: 40px;
+        height: 40px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        transition: var(--transition);
+        font-size: 1rem;
+        text-decoration: none;
+      }
+
+      .social-icons a:hover {
+        background-color: var(--primary);
+        transform: translateY(-3px);
+      }
+
+      .copyright {
+        text-align: center;
+        padding-top: 30px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        margin-top: 40px;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      /* Responsive fixes */
+      @media (max-width: 992px) {
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .step:not(:last-child)::after {
+          display: none;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .steps-container {
+          flex-direction: column;
+        }
+
+        .hero {
+          padding: 70px 0;
+        }
+
+        .hero h1 {
+          font-size: 2.2rem;
+        }
+
+        .hero p {
+          font-size: 1.1rem;
+        }
       }
     </style>
   </head>
@@ -161,14 +771,14 @@
     <header>
       <div class="container header-container">
         <a href="index.html" class="logo">Ebook<span>Haven</span></a>
-        <div class="search-bar">
+        <form class="search-bar">
           <input
             type="text"
             id="search-input"
             placeholder="Tìm kiếm sách, tác giả..."
           />
           <button><i class="fas fa-search"></i></button>
-        </div>
+        </form>
         <div class="mobile-menu-toggle" id="mobile-menu-toggle">
           <span></span>
           <span></span>
@@ -179,12 +789,10 @@
             <a href="index.html"><i class="fas fa-home"></i> Trang chủ</a>
           </li>
           <li>
-            <a href="pages/categories.html"
-              ><i class="fas fa-tags"></i> Danh mục</a
-            >
+            <a href="/categories.html"><i class="fas fa-tags"></i> Danh mục</a>
           </li>
           <li>
-            <a href="pages/upload-book.html"
+            <a href="/upload-book.html"
               ><i class="fas fa-upload"></i> Tải lên sách</a
             >
           </li>
@@ -205,12 +813,15 @@
     <div id="home-page">
       <section class="hero">
         <div class="container">
-          <h1 class="animate-fadeIn">Chào Mừng Bạn Đến Với Ebook Haven</h1>
+          <h1 class="animate-fadeIn">Chào Mừng Đến Với Ebook Haven</h1>
           <p class="animate-fadeIn">
-            Hàng ngàn sách hay miễn phí đang chờ bạn đọc!
+            Khám phá kho tàng tri thức với hàng ngàn sách hay miễn phí đang chờ
+            bạn đọc
           </p>
+
+          <!-- Thay thế dòng lỗi -->
           <a
-            href="pages/categories.html"
+            href="/categories.html"
             class="btn btn-lg btn-outline animate-fadeIn"
           >
             <i class="fas fa-compass"></i> Khám phá ngay
@@ -314,26 +925,60 @@
         <div class="footer-col">
           <h3>Khám phá</h3>
           <ul>
-            <li><a href="pages/categories.html">Danh mục</a></li>
-            <li><a href="pages/upload-book.html">Tải lên sách</a></li>
-            <li><a href="pages/profile.html">Trang cá nhân</a></li>
+            <li>
+              <a href="/categories.html"
+                ><i class="fas fa-angle-right"></i> Danh mục</a
+              >
+            </li>
+            <li>
+              <a href="/upload-book.html"
+                ><i class="fas fa-angle-right"></i> Tải lên sách</a
+              >
+            </li>
+            <li>
+              <a href="/profile.html"
+                ><i class="fas fa-angle-right"></i> Trang cá nhân</a
+              >
+            </li>
           </ul>
         </div>
         <div class="footer-col">
           <h3>Liên kết</h3>
           <ul>
-            <li><a href="#">Giới thiệu</a></li>
-            <li><a href="#">Điều khoản sử dụng</a></li>
-            <li><a href="#">Chính sách bảo mật</a></li>
-            <li><a href="#">Liên hệ</a></li>
+            <li>
+              <a href="#"><i class="fas fa-angle-right"></i> Giới thiệu</a>
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fas fa-angle-right"></i> Điều khoản sử dụng</a
+              >
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fas fa-angle-right"></i> Chính sách bảo mật</a
+              >
+            </li>
+            <li>
+              <a href="#"><i class="fas fa-angle-right"></i> Liên hệ</a>
+            </li>
           </ul>
         </div>
         <div class="footer-col">
           <h3>Hỗ trợ</h3>
           <ul>
-            <li><a href="#">Câu hỏi thường gặp</a></li>
-            <li><a href="#">Hướng dẫn sử dụng</a></li>
-            <li><a href="#">Báo cáo lỗi</a></li>
+            <li>
+              <a href="#"
+                ><i class="fas fa-angle-right"></i> Câu hỏi thường gặp</a
+              >
+            </li>
+            <li>
+              <a href="#"
+                ><i class="fas fa-angle-right"></i> Hướng dẫn sử dụng</a
+              >
+            </li>
+            <li>
+              <a href="#"><i class="fas fa-angle-right"></i> Báo cáo lỗi</a>
+            </li>
           </ul>
         </div>
       </div>
@@ -343,11 +988,11 @@
         </div>
       </div>
     </footer>
-    <script src="assets/js/notification.js"></script>
-    <script src="assets/js/auth.service.js"></script>
-    <script src="assets/js/image-utils.js"></script>
-    <script src="assets/js/api.service.js"></script>
-    <script src="assets/js/main.js"></script>
+    <script src="/assets/js/notification.js"></script>
+    <script src="/assets/js/image-utils.js"></script>
+    <script src="/assets/js/api.service.js"></script>
+    <script src="/assets/js/helper.js"></script>
+    <script src="/assets/js/main.js"></script>
     <div id="notification-container"></div>
   </body>
 </html>

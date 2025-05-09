@@ -12,16 +12,13 @@
   --warning: #ffd166;
   --success: #06d6a0;
 
- 
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
   --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 
-
   --radius-sm: 4px;
   --radius: 8px;
   --radius-lg: 16px;
-
 
   --transition: all 0.3s ease;
 }
@@ -57,7 +54,6 @@ a:hover {
   padding: 0 20px;
 }
 
-
 header {
   background-color: white;
   box-shadow: var(--shadow);
@@ -87,7 +83,7 @@ header {
 }
 
 .logo:before {
-  content: "📚";
+  content: "📗";
   margin-right: 8px;
   font-size: 1.5rem;
 }
@@ -233,7 +229,6 @@ header {
   filter: brightness(0.9);
 }
 
-
 .hero {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: white;
@@ -280,7 +275,6 @@ header {
   margin: 0 auto 35px;
   opacity: 0.9;
 }
-
 
 .categories {
   margin-bottom: 60px;
@@ -354,7 +348,6 @@ header {
   color: var(--gray);
   font-size: 0.9rem;
 }
-
 
 .featured-books,
 .new-arrivals {
@@ -455,7 +448,6 @@ header {
   margin-right: 5px;
 }
 
-
 .how-it-works {
   background-color: white;
   padding: 80px 0;
@@ -513,7 +505,6 @@ header {
   line-height: 1.5;
 }
 
-
 .step:not(:last-child):after {
   content: "→";
   position: absolute;
@@ -523,7 +514,6 @@ header {
   font-size: 2rem;
   color: var(--primary);
 }
-
 
 footer {
   background-color: var(--dark);
@@ -644,6 +634,7 @@ footer {
   position: relative;
   box-shadow: var(--shadow-lg);
   transform: translateY(20px);
+  opacity: 0;
   transition: transform 0.3s ease;
   overflow: hidden;
 }
@@ -703,15 +694,15 @@ footer {
   padding: 12px;
   text-align: center;
   cursor: pointer;
+  transition: all 0.3s;
   font-weight: 500;
-  transition: var(--transition);
   position: relative;
 }
 
 .modal-tab.active {
   background-color: white;
-  color: var(--primary);
   box-shadow: var(--shadow-sm);
+  color: var(--primary);
 }
 
 .modal-tab.active:after {
@@ -774,7 +765,6 @@ footer {
   color: var(--primary);
   font-weight: 500;
 }
-
 
 .book-detail {
   padding: 50px 0;
@@ -869,9 +859,9 @@ footer {
   margin-top: 60px;
 }
 
-
 .user-menu {
   position: relative;
+  display: inline-block;
 }
 
 .user-menu-toggle {
@@ -883,6 +873,7 @@ footer {
   font-weight: 500;
 }
 
+/* Sửa lại dropdown menu */
 .user-dropdown {
   position: absolute;
   top: 100%;
@@ -895,14 +886,21 @@ footer {
   visibility: hidden;
   transform: translateY(10px);
   transition: all 0.3s ease;
-  z-index: 100;
-  overflow: hidden;
+  z-index: 1000; /* Tăng z-index để đảm bảo hiển thị trên các phần tử khác */
+  overflow: visible; /* Thay đổi từ hidden sang visible */
+  margin-top: 5px; /* Thêm khoảng cách giữa nút và dropdown */
+  width: 220px; /* Chiều rộng cố định để đảm bảo sự nhất quán */
 }
 
 .user-menu:hover .user-dropdown {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
+}
+
+/* Điều chỉnh vị trí của dropdown để không bị tràn ra khỏi màn hình */
+.nav-menu .user-menu-item {
+  position: relative;
 }
 
 .user-dropdown a {
@@ -921,7 +919,6 @@ footer {
 .user-dropdown a:last-child {
   border-bottom: none;
 }
-
 
 @keyframes fadeIn {
   from {
@@ -951,7 +948,6 @@ footer {
   animation: slideUp 0.5s ease forwards;
 }
 
-
 .loading-spinner {
   display: inline-block;
   width: 50px;
@@ -967,7 +963,6 @@ footer {
     transform: rotate(360deg);
   }
 }
-
 
 #notification-container {
   position: fixed;
