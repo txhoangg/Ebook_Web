@@ -677,12 +677,18 @@
 
         // Kiểm tra vai trò của người dùng
         const currentUser = apiService.auth.getCurrentUser();
-        if (currentUser && (currentUser.role !== "admin" && currentUser.role !== "moderator")) {
+        if (
+          currentUser &&
+          currentUser.role !== "admin" &&
+          currentUser.role !== "moderator"
+        ) {
           document.getElementById("book-upload-form").classList.add("disabled");
           document.getElementById("upload-button").disabled = true;
 
-          notifications.error("Bạn cần là admin hoặc moderator để tải lên sách!");
-          
+          notifications.error(
+            "Bạn cần là admin hoặc moderator để tải lên sách!"
+          );
+
           // Thêm thông báo trực quan
           const uploadContainer = document.querySelector(".upload-container");
           const warningDiv = document.createElement("div");
@@ -693,9 +699,13 @@
           warningDiv.style.backgroundColor = "#ffebee";
           warningDiv.style.color = "#ef476f";
           warningDiv.style.border = "1px solid #f8bbd0";
-          warningDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Chỉ admin hoặc moderator mới có quyền tải sách lên.';
-          
-          uploadContainer.insertBefore(warningDiv, document.querySelector(".upload-form"));
+          warningDiv.innerHTML =
+            '<i class="fas fa-exclamation-triangle"></i> Chỉ admin hoặc moderator mới có quyền tải sách lên. Vui lòng liên hệ email: admin@ebookhaven.com để biết thêm chi tiết!';
+
+          uploadContainer.insertBefore(
+            warningDiv,
+            document.querySelector(".upload-form")
+          );
           return;
         }
 

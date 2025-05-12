@@ -384,7 +384,6 @@ function createAuthModal() {
                 <input type="checkbox" id="remember-me">
                 <label for="remember-me">Ghi nhớ đăng nhập</label>
               </div>
-              <a href="#" class="forgot-password">Quên mật khẩu?</a>
             </div>
             
             <div class="form-group">
